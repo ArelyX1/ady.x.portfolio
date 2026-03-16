@@ -1,0 +1,59 @@
+@import "tailwindcss";
+
+
+
+.home, .skills {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(5, 1fr);
+  grid-column-gap: 0px;
+  grid-row-gap: 0px;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+
+  /* background tipo pizarra */
+  background-color: #fff;
+  background-image: radial-gradient(circle, #888 0.2px, transparent 1.7px);
+  background-size: 25px 25px;
+}
+
+/* para .projects sin fondo */
+.proyects{
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(5, 1fr);
+  grid-column-gap: 0px;
+  grid-row-gap: 0px;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.title{
+  grid-area:  1 / 5 / 3 / 6;
+}
+.draw {
+  grid-area: 1 / 1 / 5 / 5;
+}
+
+.description {
+  grid-area:  3 / 5 / 6 / 6;
+}
+
+.media {
+  grid-area: 5 / 1 / 6 / 5;
+}
+
+.technologies { 
+  grid-area: 1 / 1 / 6 / 3;
+  background-color: rgb(20, 158, 27);  
+}
+.div5 { 
+  grid-area: 1 / 4 / 6 / 6; 
+  background-color: rgb(27, 20, 158);
+}
