@@ -1,0 +1,20 @@
+{
+  "name": "ar3lyx1-portfolio",
+  "type": "module",
+  "version": "0.0.1",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "astro": "^6.4.7",
+    "motion": "^12.40.0",
+    "postprocessing": "^6.39.1",
+    "three": "^0.184.0"
+  }
+}

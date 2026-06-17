@@ -1,0 +1,60 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  background: #000;
+  color: #ff80ff;
+  font-family: 'Courier New', Courier, monospace;
+  height: 100%;
+  overflow: hidden;
+}
+
+.boot-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  padding: 20px;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-start;
+  background: #000;
+}
+
+.boot-screen--centered {
+  align-items: center;
+}
+
+.boot-output {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 14px;
+  color: #ff80ff;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  line-height: 1.5;
+  white-space: pre;
+}
+
+.boot-cursor {
+  display: inline-block;
+  width: 8px;
+  height: 1.1em;
+  background: #ff80ff;
+  margin-left: 2px;
+  vertical-align: text-bottom;
+  animation: boot-blink 0.7s step-end infinite;
+}
+
+.boot-output div {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: clip;
+}
+
+@keyframes boot-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}

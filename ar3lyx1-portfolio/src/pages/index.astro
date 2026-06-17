@@ -1,0 +1,84 @@
+---
+import '../home/infrastructure/ui/styles/boot.css';
+---
+
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+  </head>
+  <body style="margin:0; background:#000; overflow:hidden;">
+    <div id="boot-screen" class="boot-screen">
+      <div id="boot-output" class="boot-output"></div>
+    </div>
+
+    <div id="video-container" style="display:none; position:fixed; inset:0; z-index:50; background:#000;">
+      <video id="staticVideo" src="/Static_Screen.mp4" muted autoplay playsinline style="width:100%; height:100%; object-fit:cover;"></video>
+    </div>
+
+    <div id="model-container" style="display:none; position:fixed; inset:0; z-index:75;"></div>
+
+    <div id="white-top" style="position:fixed; top:0; left:0; right:0; height:0; background:#fff; z-index:100;"></div>
+    <div id="white-bottom" style="position:fixed; bottom:0; left:0; right:0; height:0; background:#fff; z-index:100;"></div>
+    <div id="white-left" style="position:fixed; left:0; top:0; bottom:0; width:0; background:#fff; z-index:100;"></div>
+    <div id="white-right" style="position:fixed; right:0; top:0; bottom:0; width:0; background:#fff; z-index:100;"></div>
+  </body>
+</html>
+
+<script>
+  import { animate } from 'motion';
+  import('../home/infrastructure/ui/scripts/boot.js');
+  import { MODELS } from '../home/application/model-viewer/config.js';
+
+  window.addEventListener('bootComplete', async () => {
+    const videoContainer = document.getElementById('video-container');
+    const video = document.getElementById('staticVideo');
+    const topPanel = document.getElementById('white-top');
+    const bottomPanel = document.getElementById('white-bottom');
+    const leftPanel = document.getElementById('white-left');
+    const rightPanel = document.getElementById('white-right');
+    const modelContainer = document.getElementById('model-container');
+
+    videoContainer.style.display = 'block';
+    video.currentTime = 3.5;
+    video.play();
+
+    await new Promise(r => setTimeout(r, 1500));
+
+    const gap = 80;
+    const topTarget = (window.innerHeight / 2) - (gap / 2);
+    const bottomTarget = (window.innerHeight / 2) - (gap / 2);
+    const leftTarget = (window.innerWidth / 2) - (gap / 2);
+    const rightTarget = (window.innerWidth / 2) - (gap / 2);
+
+    await Promise.all([
+      animate(topPanel, { height: topTarget + 'px' }, { duration: 1.5, easing: [0.4, 0, 0.2, 1] }).finished,
+      animate(bottomPanel, { height: bottomTarget + 'px' }, { duration: 1.5, easing: [0.4, 0, 0.2, 1] }).finished,
+      animate(leftPanel, { width: leftTarget + 'px' }, { duration: 1.5, easing: [0.4, 0, 0.2, 1] }).finished,
+      animate(rightPanel, { width: rightTarget + 'px' }, { duration: 1.5, easing: [0.4, 0, 0.2, 1] }).finished,
+    ]);
+
+    await new Promise(r => setTimeout(r, 300));
+
+    await Promise.all([
+      animate(topPanel, { height: '50%' }, { duration: 0.4, easing: 'ease-in' }).finished,
+      animate(bottomPanel, { height: '50%' }, { duration: 0.4, easing: 'ease-in' }).finished,
+      animate(leftPanel, { width: '50%' }, { duration: 0.4, easing: 'ease-in' }).finished,
+      animate(rightPanel, { width: '50%' }, { duration: 0.4, easing: 'ease-in' }).finished,
+    ]);
+
+    document.body.style.background = '#fff';
+    document.documentElement.style.background = '#fff';
+    videoContainer.style.display = 'none';
+    topPanel.style.display = 'none';
+    bottomPanel.style.display = 'none';
+    leftPanel.style.display = 'none';
+    rightPanel.style.display = 'none';
+    modelContainer.style.display = 'block';
+    const { initModelViewer } = await import('../home/infrastructure/ui/viewer/ModelViewer.js');
+    initModelViewer(modelContainer, MODELS);
+  });
+</script>

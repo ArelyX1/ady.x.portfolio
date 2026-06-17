@@ -1,0 +1,24 @@
+---
+---
+
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+  </head>
+  <body style="margin:0; background:#fff; overflow:hidden; font-family:monospace;">
+    <div id="model-container" style="position:fixed; inset:0;"></div>
+  </body>
+</html>
+
+<script>
+  import('../home/infrastructure/ui/viewer/ModelViewer.js').then(({ initModelViewer }) => {
+    initModelViewer(document.getElementById('model-container'), {
+      path: '/skull_laugh.glb',
+      scale: 7,
+      y: 2.2,
+      z: 2,
+      rotX: 1.608,
+    });
+  });
+</script>
