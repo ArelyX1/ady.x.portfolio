@@ -9,6 +9,9 @@ import '../home/infrastructure/ui/styles/boot.css';
     <link rel="icon" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&family=VT323&display=swap" rel="stylesheet">
   </head>
   <body style="margin:0; background:#000; overflow:hidden;">
     <div id="boot-screen" class="boot-screen">
@@ -21,6 +24,19 @@ import '../home/infrastructure/ui/styles/boot.css';
 
     <div id="model-container" style="display:none; position:fixed; inset:0; z-index:75;"></div>
 
+    <div id="portfolio-title" style="display:none; position:fixed; top: 100px; left: 5%; z-index:85; background:#fff; color:#1f1f1f; font-family: 'Ubuntu', monospace; font-weight: 800; letter-spacing:.15em;">
+      <div id="title-line" style="display:flex; align-items:baseline; gap:15rem;">
+        <div id="title-text" style="font-size:clamp(3.5rem,9.5vw,7.5rem); font-weight: 900; height: 0.4em; min-height: 1em; line-height:1; overflow:hidden;"></div>
+        <div id="title-sub" style="font-size:clamp(1.25rem,2.5vw,1.75rem); font-weight:700; height: 0.4em; min-height: 1em; line-height:1; overflow:hidden; color:#1f1f1f;"></div>
+      </div>
+      <div id="title-text-2" style="font-size:clamp(3.5rem,9.5vw,7.5rem); font-weight: 900; height: 0.4em; min-height: 1em; line-height:1; overflow:hidden;"></div>
+      <div id="title-title" style="font-size:clamp(3.5rem,9.5vw,7.5rem); font-weight: 900; height: 0.4em; min-height: 1em; line-height:1; overflow:hidden; color:#8a0606;"></div>
+
+      <div id="title-phrase" style="font-size:clamp(3.75rem,6vw,4.5rem); font-style: italic; font-weight: 600; overflow:hidden; height: 0.4em; min-height: 1em; line-height:1; margin-top: 0.5rem;"></div>
+      <div id="title-phrase-2" style="font-size:clamp(3.75rem,6vw,4.5rem); font-style: italic; font-weight: 600; overflow:hidden; height: 0.4em; min-height: 1em; line-height:1; margin-top: 0.5rem;"></div>
+      <div id="title-autor" style="font-size:clamp(3.55rem,5.7vw,4.3rem); font-style: italic; font-weight: 600; overflow:hidden; height: 0.4em; min-height: 1em; line-height:1; margin-top: 0.5rem;"></div>
+    </div>
+
     <div id="white-top" style="position:fixed; top:0; left:0; right:0; height:0; background:#fff; z-index:100;"></div>
     <div id="white-bottom" style="position:fixed; bottom:0; left:0; right:0; height:0; background:#fff; z-index:100;"></div>
     <div id="white-left" style="position:fixed; left:0; top:0; bottom:0; width:0; background:#fff; z-index:100;"></div>
@@ -32,6 +48,72 @@ import '../home/infrastructure/ui/styles/boot.css';
   import { animate } from 'motion';
   import('../home/infrastructure/ui/scripts/boot.js');
   import { MODELS } from '../home/application/model-viewer/config.js';
+
+  function animateTextById(id, text, duration = 0.7, charDelay = 0.09) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const content = text ?? '';
+    el.innerHTML = '';
+    let specialWrapper = null;
+    content.split('').forEach((char, index) => {
+      if (id === 'title-text' && content === 'ANDRY' && char === 'D') {
+        const wrapper = document.createElement('span');
+        wrapper.style.display = 'inline-flex';
+        wrapper.style.alignItems = 'center';
+        wrapper.style.justifyContent = 'center';
+        wrapper.style.position = 'relative';
+        wrapper.style.transform = 'translateY(-103%)';
+        const original = document.createElement('span');
+        original.innerText = 'D';
+        original.style.opacity = '1';
+        const replacement = document.createElement('span');
+        replacement.innerText = '☾︎';
+        replacement.style.position = 'absolute';
+        replacement.style.inset = '0';
+        replacement.style.display = 'flex';
+        replacement.style.alignItems = 'center';
+        replacement.style.justifyContent = 'center';
+        replacement.style.opacity = '0';
+        replacement.style.pointerEvents = 'none';
+        original.style.lineHeight = '1';
+        wrapper.appendChild(original);
+        wrapper.appendChild(replacement);
+        el.appendChild(wrapper);
+        specialWrapper = { wrapper, original, replacement, index };
+        return;
+      }
+      const span = document.createElement('span');
+      span.innerText = char === ' ' ? '\u00A0' : char;
+      span.style.display = 'inline-block';
+      span.style.transform = 'translateY(-103%)';
+      el.appendChild(span);
+    });
+    Array.from(el.children).forEach((child, index) => {
+      const dropDelay = index * charDelay;
+      animate(child, { transform: 'translateY(0%)' }, { duration, delay: dropDelay, easing: 'linear' });
+      if (child === specialWrapper?.wrapper) {
+        const { original, replacement } = specialWrapper;
+        const revealDelay = dropDelay + duration + 0.15;
+        const fadeDuration = 0.2;
+        const visibleDuration = 0.4;
+        const loopDuration = fadeDuration * 2 + visibleDuration;
+        const pFadeIn = fadeDuration / loopDuration;
+        const pHold = (fadeDuration + visibleDuration) / loopDuration;
+        animate(original, [
+          { opacity: 1, offset: 0 },
+          { opacity: 0, offset: pFadeIn },
+          { opacity: 0, offset: pHold },
+          { opacity: 1, offset: 1 }
+        ], { duration: loopDuration, delay: revealDelay, repeat: Infinity, easing: 'ease-in-out' });
+        animate(replacement, [
+          { opacity: 0, offset: 0 },
+          { opacity: 1, offset: pFadeIn },
+          { opacity: 1, offset: pHold },
+          { opacity: 0, offset: 1 }
+        ], { duration: loopDuration, delay: revealDelay, repeat: Infinity, easing: 'ease-in-out' });
+      }
+    });
+  }
 
   window.addEventListener('bootComplete', async () => {
     const videoContainer = document.getElementById('video-container');
@@ -79,6 +161,26 @@ import '../home/infrastructure/ui/styles/boot.css';
     rightPanel.style.display = 'none';
     modelContainer.style.display = 'block';
     const { initModelViewer } = await import('../home/infrastructure/ui/viewer/ModelViewer.js');
-    initModelViewer(modelContainer, MODELS);
+    const viewer = initModelViewer(modelContainer, MODELS);
+
+    setTimeout(async () => {
+      const vhsEffect = viewer.startVHS();
+      await new Promise(r => setTimeout(r, 1000));
+      viewer.stopVHS();
+      if (viewer && viewer.dispose) viewer.dispose();
+      modelContainer.style.display = 'none';
+
+      const titleDiv = document.getElementById('portfolio-title');
+      titleDiv.style.display = 'block';
+      titleDiv.style.opacity = '0';
+      animateTextById('title-text', 'ANDRY');
+      animateTextById('title-sub', '>_AR3LYX1', 0.7, 0.15);
+      animateTextById('title-text-2', 'CACERES');
+      animateTextById('title-title', 'SOFTWARE DEV');
+      animateTextById('title-phrase', "\"Software is like sex:", 0.28);
+      animateTextById('title-phrase-2', "it's better when it's free.\"",0.28);
+      animateTextById('title-autor', " - Linus Torvalds -");
+      titleDiv.style.opacity = '1';
+    }, 2000);
   });
 </script>

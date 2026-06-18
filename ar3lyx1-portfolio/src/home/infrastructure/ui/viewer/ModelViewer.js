@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { EffectComposer, RenderPass, EffectPass } from 'postprocessing';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { createAsciiTexture, CustomASCIIEffect } from './ASCIIEffect.js';
+import { VHSDistortionEffect } from './VHSEffect.js';
 
 export function initModelViewer(container, config) {
   if (window.innerWidth < 520) return;
@@ -96,7 +97,21 @@ export function initModelViewer(container, config) {
     composer.render();
   })();
 
+  let vhsPass = null;
+
   return {
     dispose() { renderer.dispose(); composer.dispose(); },
+    startVHS() {
+      const vhs = new VHSDistortionEffect();
+      vhsPass = new EffectPass(camera, vhs);
+      composer.addPass(vhsPass);
+      return vhs;
+    },
+    stopVHS() {
+      if (vhsPass) {
+        composer.removePass(vhsPass);
+        vhsPass = null;
+      }
+    },
   };
 }
