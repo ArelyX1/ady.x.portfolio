@@ -131,6 +131,27 @@ import ContactSection from '../components/ContactSection.astro';
     });
   }
 
+  function animateDrop(el, html) {
+    el.innerHTML = '';
+    const parts = html.split('<br>');
+    parts.forEach((part, pi) => {
+      if (pi > 0) el.appendChild(document.createElement('br'));
+      const indent = part.startsWith('_> [');
+      [...part].forEach((char, ci) => {
+        const span = document.createElement('span');
+        span.textContent = char === ' ' ? '\u00A0' : char;
+        span.style.display = 'inline-block';
+        span.style.transform = 'translateY(-103%)';
+        if (ci === 0 && indent) span.style.marginLeft = '1.8em';
+        el.appendChild(span);
+      });
+    });
+    const chars = [...el.children].filter(c => c.tagName !== 'BR');
+    chars.forEach((child, idx) => {
+      animate(child, { transform: 'translateY(0%)' }, { duration: 0.5, delay: idx * 0.04, easing: 'linear' });
+    });
+  }
+
   window.addEventListener('bootComplete', async () => {
     const videoContainer = document.getElementById('video-container');
     const video = document.getElementById('staticVideo');
@@ -224,7 +245,7 @@ import ContactSection from '../components/ContactSection.astro';
           const binaryLabels = {};
           items.forEach(i => {
             const h3 = i.querySelector('.ws-front h3');
-            if (h3) binaryLabels[i.dataset.col + i.dataset.row] = h3.textContent;
+            if (h3) binaryLabels[i.dataset.col + i.dataset.row] = h3.innerHTML;
           });
 
           function flipAnimate(el, toCol, toRow) {
@@ -246,9 +267,15 @@ import ContactSection from '../components/ContactSection.astro';
             });
           }
 
-          function setFrontText(item, text) {
+          function setFrontText(item, text, animate = false) {
             const h3 = item.querySelector('.ws-front h3');
-            if (h3) h3.textContent = text;
+            if (!h3) return;
+            const html = text.replace(/_> /g, '<br>_> ').replace(/^<br>/, '');
+            if (animate) {
+              animateDrop(h3, html);
+            } else {
+              h3.innerHTML = html;
+            }
           }
 
           function collapse() {
@@ -261,24 +288,30 @@ import ContactSection from '../components/ContactSection.astro';
             items.forEach(i => {
               i.style.gridColumn = '';
               i.style.gridRow = '';
-              const front = i.querySelector('.ws-front');
-              if (front) front.classList.remove('small');
+              const f = i.querySelector('.ws-front');
+              if (f) {
+                f.classList.remove('small');
+                f.style.opacity = '';
+              }
               const key = i.dataset.col + i.dataset.row;
-              if (binaryLabels[key]) setFrontText(i, binaryLabels[key]);
+              if (binaryLabels[key]) {
+                const h3 = i.querySelector('.ws-front h3');
+                if (h3) h3.innerHTML = binaryLabels[key];
+              }
             });
-            const front = el.querySelector('.ws-front h3');
             const expand = el.querySelector('.ws-expand');
+            const frontEl = el.querySelector('.ws-front h3');
             if (expand) expand.classList.remove('visible');
             if (back) back.classList.remove('visible');
             flipAnimate(el, col, row).then(() => {
-              if (front) front.style.opacity = '1';
+              if (frontEl) frontEl.style.opacity = '1';
             });
           }
 
           items.forEach(item => {
             item.addEventListener('click', async () => {
               if (expanded === item) { collapse(); return; }
-              if (expanded) collapse();
+              if (expanded) return;
 
               items.forEach(i => {
                 const front = i.querySelector('.ws-front');
@@ -300,7 +333,7 @@ import ContactSection from '../components/ContactSection.astro';
                 const targets = items.filter(i => i !== item);
                 targets.forEach((t, idx) => {
                   if (replaces[idx]) {
-                    setFrontText(t, replaces[idx]);
+                    setFrontText(t, replaces[idx], true);
                     const ft = t.querySelector('.ws-front');
                     if (ft) ft.classList.add('small');
                   }
