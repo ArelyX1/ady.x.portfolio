@@ -271,7 +271,7 @@ import ContactSection from '../components/ContactSection.astro';
             const h3 = item.querySelector('.ws-front h3');
             if (!h3) return;
             const html = text.replace(/_> /g, '<br>_> ').replace(/^<br>/, '');
-            if (animate) {
+            if (animate && !text.includes('<')) {
               animateDrop(h3, html);
             } else {
               h3.innerHTML = html;
