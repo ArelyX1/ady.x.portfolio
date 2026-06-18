@@ -124,11 +124,13 @@ import '../home/infrastructure/ui/styles/boot.css';
     const rightPanel = document.getElementById('white-right');
     const modelContainer = document.getElementById('model-container');
 
+    const modelModulePromise = import('../home/infrastructure/ui/viewer/ModelViewer.js');
+
     videoContainer.style.display = 'block';
     video.currentTime = 3.5;
     video.play();
 
-    await new Promise(r => setTimeout(r, 1500));
+    await new Promise(r => setTimeout(r, 1200));
 
     const gap = 80;
     const topTarget = (window.innerHeight / 2) - (gap / 2);
@@ -143,7 +145,13 @@ import '../home/infrastructure/ui/styles/boot.css';
       animate(rightPanel, { width: rightTarget + 'px' }, { duration: 1.5, easing: [0.4, 0, 0.2, 1] }).finished,
     ]);
 
-    await new Promise(r => setTimeout(r, 300));
+    modelContainer.style.display = 'block';
+    const setupPromise = (async () => {
+      const { initModelViewer } = await modelModulePromise;
+      return initModelViewer(modelContainer, MODELS);
+    })();
+
+    await new Promise(r => setTimeout(r, 0));
 
     await Promise.all([
       animate(topPanel, { height: '50%' }, { duration: 0.4, easing: 'ease-in' }).finished,
@@ -159,9 +167,7 @@ import '../home/infrastructure/ui/styles/boot.css';
     bottomPanel.style.display = 'none';
     leftPanel.style.display = 'none';
     rightPanel.style.display = 'none';
-    modelContainer.style.display = 'block';
-    const { initModelViewer } = await import('../home/infrastructure/ui/viewer/ModelViewer.js');
-    const viewer = initModelViewer(modelContainer, MODELS);
+    const viewer = await setupPromise;
 
     setTimeout(async () => {
       const vhsEffect = viewer.startVHS();
@@ -171,6 +177,7 @@ import '../home/infrastructure/ui/styles/boot.css';
       modelContainer.style.display = 'none';
 
       const titleDiv = document.getElementById('portfolio-title');
+
       titleDiv.style.display = 'block';
       titleDiv.style.opacity = '0';
       animateTextById('title-text', 'ANDRY');
@@ -181,6 +188,6 @@ import '../home/infrastructure/ui/styles/boot.css';
       animateTextById('title-phrase-2', "it's better when it's free.\"",0.28);
       animateTextById('title-autor', " - Linus Torvalds -");
       titleDiv.style.opacity = '1';
-    }, 2000);
+    }, 2500);
   });
 </script>
