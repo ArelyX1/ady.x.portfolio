@@ -1,0 +1,11 @@
+@use 'sass:map';
+@use "../variables-scss/colors" as *;
+
+@function color($key, $alpha: 1) {
+  @if $alpha != 1 {
+    $value: map.get($theme-colors, $key);
+    @return rgba($value, $alpha);
+  } @else {
+    @return var(--color-#{$key});
+  }
+}

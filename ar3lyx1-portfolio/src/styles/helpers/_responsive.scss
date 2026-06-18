@@ -1,0 +1,13 @@
+@use "sass:map";
+@use "../variables-scss/breakpoints" as *;
+
+@mixin mq($breakpoint) {
+  @if $breakpoint == 'default' {
+    @content;
+  } @else {
+    $query: map.get($theme-breakpoints, $breakpoint);
+    @media #{$query} {
+      @content;
+    }
+  }
+}

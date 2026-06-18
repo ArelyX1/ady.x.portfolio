@@ -1,0 +1,371 @@
+---
+import '../styles/variables-css/_colors.scss';
+
+const menu = [
+  { id: 'work', text: 'Work' },
+  { id: 'contact', text: 'Contact' },
+]
+---
+
+<header class="site-head" id="site-head">
+  <div class="site-head__container">
+    <div class="sb-logo">
+      <a href="/">
+        <svg
+          class="js-logo"
+          width="280"
+          height="280"
+          viewBox="0 0 280 280"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path d="M140 10L10 270h40L140 90l90 180h40L140 10Z" fill="var(--color-primary)"/>
+          <rect x="60" y="155" width="160" height="18" fill="var(--color-primary)"/>
+          <path d="M265 45v190H75V45h190Z" stroke="var(--color-primary)" stroke-width="38" fill="none"/>
+        </svg>
+        <span class="u-sr-only">AR3LYX1</span>
+      </a>
+    </div>
+
+    <div class="sb-console" role="presentation">
+      <div class="sb-console__inner js-console"></div>
+    </div>
+
+    <nav class="sb-menu">
+      <ul class="sb__list">
+        {menu.map((item) => (
+          <li class="sb__item js-menu-item">
+            <a href={'#' + item.id} class="js-menu-link">
+              <span class="sb__text">{item.text}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <ul class="sb-socials">
+      <li class="sb__item">
+        <a href="https://github.com/arelyX1" target="_blank" rel="noopener" class="sb-social-link">
+          <svg class="sb__icon" viewBox="0 0 20 20" width="20" height="20" fill="currentColor" aria-hidden="true">
+            <path d="M10 0C4.477 0 0 4.477 0 10c0 4.42 2.865 8.167 6.839 9.49.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.604-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.463-1.11-1.463-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0110 4.836c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C17.14 18.163 20 14.418 20 10c0-5.523-4.477-10-10-10z"/>
+          </svg>
+          <span class="u-sr-only">GitHub</span>
+        </a>
+      </li>
+      <li class="sb__item">
+        <a href="https://www.linkedin.com/in/andry-caceres-439504331/" target="_blank" rel="noopener" class="sb-social-link">
+          <svg class="sb__icon" viewBox="0 0 16 16" width="20" height="20" fill="currentColor" aria-hidden="true">
+            <path d="M1.13025 14.9839H3.93671V4.6H1.13025V14.9839ZM2.53348 0.0161285C1.598 0.0161285 0.849609 0.764516 0.849609 1.7C0.849609 2.63548 1.598 3.38387 2.53348 3.38387C3.46896 3.38387 4.21735 2.63548 4.21735 1.7C4.21735 0.764516 3.46896 0.0161285 2.53348 0.0161285ZM8.70767 6.19032V4.6H5.90122V14.9839H8.70767V9.65161C8.70767 6.65806 12.5432 6.47097 12.5432 9.65161V14.9839H15.3496V8.62258C15.3496 3.57097 10.0174 3.75806 8.70767 6.19032Z"/>
+          </svg>
+          <span class="u-sr-only">LinkedIn</span>
+        </a>
+      </li>
+    </ul>
+
+    <aside class="sb-availability">
+      <p>
+        <span class="sb__line">
+          <span class="sb__text">Coding from somewhere.</span>
+        </span>
+        <span class="sb__line">
+          <span class="sb__text">Available for freelance work →</span>
+          <a href="mailto:andry.caceres@estudiante.ucsm.edu.pe" class="sb__link sb__link--hire">Hire me</a>
+        </span>
+      </p>
+    </aside>
+  </div>
+</header>
+
+<script>
+  import { gsap } from 'gsap'
+
+  const messages = [
+    'Preparing for inevitable debugging',
+    'Compiling designer dreams…into developer nightmares',
+    'Please wait while I overthink this',
+    'Optimizing… but nothing\'s perfect',
+    'Configuring the next minor inconvenience',
+    'Fetching assets… contemplating the futility of it all',
+    'Re-routing your expectations… expect delays',
+    'Trying to animate enthusiasm… it\'s not going well',
+    'Stuck in an infinite loop',
+    'Loading… still pointless',
+    'Simulating progress… sort of',
+    'This will probably break soon',
+    'Simulating something useful',
+    'Progress bar full of lies',
+    'Finding meaning in the code',
+    'Calculating failure probabilities',
+    'Please wait… indefinitely',
+    'Loading… almost there!',
+    'Animating pixels with love',
+    'Integrating magic and code',
+    'Optimizing creativity… stand by',
+    'Design and code handshake',
+    'Fetching creativity… almost done!',
+    'Preparing awesomeness',
+    'Simulating brilliance… probably',
+    'Everything is under control',
+    'Loading coolness… almost ready',
+    'Calibrating designer dreams',
+    'Fusing design and animation',
+    'Running creativity protocols',
+    'Crafting magic… please wait',
+    'Making things pretty… hold on',
+    'Loading… this might take a bit',
+    'Animating pixels… somewhat precisely',
+    'Integrating code and reality',
+    'Halfway done… maybe',
+    'Optimizing… cautiously hopeful',
+    'Design meets code… fingers crossed',
+    'Fetching some interesting stuff',
+    'Preparing… slowly but surely',
+    'Aligning pixels… carefully',
+    'Calibrating… what exactly? Good question',
+    'Waiting… patience is key',
+    'Simulating… something, probably',
+    'Loading… feel free to blink',
+    'Running some clever algorithms',
+    'Almost there… give or take',
+    'Integrating… like a pro',
+    'Crafting… without breaking anything',
+    'Adjusting fonts… nearly invisible',
+    'Piecing it together… stay tuned',
+    'Loading… nothing to see yet',
+    'Running final checks… hopefully',
+    'Almost ready… trust me',
+    'Building… it\'s getting there',
+    'Loading… but why rush?',
+    'Please wait… or don\'t, whatever',
+    'Initializing… prepare for bugs',
+    'Optimizing… but who cares?',
+    'Deploying… probably not broken',
+    'Making things work… hopefully',
+    'Running… but not too fast',
+    'Testing patience… stay calm',
+    'Initializing… no promises',
+    'Loading… but who\'s counting?',
+    'Loading… could be worse',
+  ]
+
+  function startConsole(el) {
+    let message = ''
+    let lastMessage = ''
+    let lastTypeTime = 0
+    let writeDelay = 0
+    let messageLineBreak = false
+
+    function getRandomMessage() {
+      let m = messages[Math.floor(Math.random() * messages.length)]
+      if (m === lastMessage) return getRandomMessage()
+      lastMessage = m
+      return m
+    }
+
+    function tick(time) {
+      if (time - lastTypeTime < writeDelay) return
+
+      if (message === '') {
+        message = getRandomMessage()
+        writeDelay = 2000
+      } else {
+        if (message === lastMessage || messageLineBreak) {
+          el.textContent += '\n'
+        }
+        const char = message.charAt(0)
+        message = message.substring(1)
+        if (char === ',') writeDelay = 100
+        else if (char === ' ') writeDelay = 100
+        else if (char === '') writeDelay = 200
+        else if (char === '…') writeDelay = 400
+        else if (char === '.') writeDelay = 400
+        else writeDelay = 20
+
+        el.textContent += char
+        messageLineBreak = char === '…'
+      }
+      el.textContent = el.textContent.split('\n').slice(-5).join('\n')
+      lastTypeTime = time
+    }
+
+    function loop(time) {
+      tick(time)
+      requestAnimationFrame(loop)
+    }
+    requestAnimationFrame(loop)
+  }
+
+  document.addEventListener('intro', () => {
+    const el = document.querySelector('.site-head')
+    const logo = el.querySelector('.js-logo')
+    const menuItems = el.querySelectorAll('.js-menu-item')
+    const consoleEl = el.querySelector('.js-console')
+
+    gsap.set(el, { opacity: 1 })
+    gsap.from(el, { y: '100%', duration: 1.2, ease: 'expo.inOut', delay: 0.3 })
+    gsap.from(logo, { y: '100%', duration: 1.2, ease: 'expo.out', delay: 0.5 })
+    gsap.from(menuItems, { y: '100%', duration: 1.2, ease: 'expo.out', stagger: 0.08, delay: 0.5 })
+    gsap.from('.sb-availability', { y: '100%', duration: 1.2, ease: 'expo.out', delay: 0.7 })
+    gsap.from('.sb-socials', { y: '100%', duration: 1.2, ease: 'expo.out', delay: 0.7 })
+
+    setTimeout(() => startConsole(consoleEl), 2000)
+
+    el.querySelectorAll('.js-menu-link').forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault()
+        const id = link.getAttribute('href')
+        const target = document.querySelector(id)
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      })
+    })
+  })
+</script>
+
+<style lang="scss">
+  .site-head {
+    position: relative;
+    z-index: 5;
+    width: 100%;
+    border-top: 1px solid color(secondary);
+    opacity: 0;
+
+    &__container {
+      @include flex(row, stretch, space-between);
+      width: 100%;
+      height: 6rem;
+      @include mq(phone) { height: 4rem; }
+    }
+
+    .sb-logo {
+      padding: 1.5rem;
+      width: 6rem;
+      height: 6rem;
+      border-right: 1px solid color(secondary);
+      @include mq(phone) {
+        padding: 1rem;
+        width: 4rem;
+        height: 4rem;
+      }
+      svg {
+        width: 3rem; height: 3rem;
+        @include mq(phone) { width: 1.875rem; height: 1.875rem; }
+      }
+    }
+
+    .sb-console {
+      @include flex(column, flex-start, flex-end);
+      margin: 0 auto 0 0;
+      padding: 1.5rem;
+      font: 400 8px / 1.4 font-family(fraktion);
+      text-transform: uppercase;
+      white-space: pre-line;
+      @include mq(tablet-sm) { display: none; }
+      &__inner {
+        @include flex(column, flex-start, flex-end);
+        height: 5.6em;
+        overflow: hidden;
+      }
+    }
+
+    .sb-menu {
+      border-left: 1px solid color(secondary);
+      @include mq(tablet) { display: none; }
+      .sb__list {
+        @include flex(row, center, flex-start);
+        margin: 0; padding: 0; height: 100%;
+        list-style: none;
+      }
+      .sb__item { margin: 0; padding: 0; }
+      .sb__text {
+        position: relative;
+        display: inline-block;
+        &:before {
+          position: absolute;
+          top: calc(50% - 3px);
+          left: -13px;
+          border-top: 3px solid transparent;
+          border-left: 6px solid currentcolor;
+          border-bottom: 3px solid transparent;
+          opacity: 0;
+          content: '';
+        }
+      }
+      a {
+        display: block;
+        padding: 2rem 3rem;
+        color: color(secondary);
+        font: 400 14px / 1 font-family(fraktion);
+        letter-spacing: 0.05em;
+        text-decoration: none;
+        text-transform: uppercase;
+        @include mq(desktop-xs) { padding: 2rem 1rem; }
+        &:hover {
+          text-shadow: 0 0 1px currentcolor;
+          .sb__text:before { opacity: 1; }
+        }
+      }
+    }
+
+    .sb-socials {
+      margin: 0; padding: 0;
+      background: linear-gradient(0deg, transparent calc(50% - 1px), color(secondary) calc(50% - 1px), color(secondary) 50%, transparent 50%);
+      border-left: 1px solid color(secondary);
+      list-style: none;
+      @include mq(phone) {
+        @include flex(row, center, center);
+        margin-left: auto;
+        background: none;
+        border-left: 0;
+      }
+      .sb__item {
+        margin: 0; padding: 0;
+        @include mq(phone) {
+          @include flex(column, center, center);
+          height: 100%;
+          border-left: 1px solid color(secondary);
+        }
+      }
+      .sb__icon {
+        display: block;
+        width: 20px; height: 20px;
+        color: color(secondary);
+      }
+      .sb-social-link {
+        @include flex(row, center, center);
+        color: color(secondary);
+        text-decoration: none;
+        position: relative;
+        width: 48px; height: 48px;
+        @include mq(phone) { height: 100%; }
+        &:hover { opacity: 0.7; }
+      }
+    }
+
+    .sb-availability {
+      background: linear-gradient(0deg, transparent calc(50% - 1px), color(secondary) calc(50% - 1px), color(secondary) 50%, transparent 50%);
+      border-left: 1px solid color(secondary);
+      font: 300 1.25rem / 48px 'Ubuntu', monospace;
+      color: #1f1f1f;
+      @include mq(tablet-sm) { flex-grow: 1; border-left: 0; }
+      @include mq(phone) {
+        @include flex(column, center, center);
+        flex-grow: 0;
+        background: none;
+        border-left: 1px solid color(secondary);
+      }
+      p { margin: 0; }
+      .sb__line { display: block; padding: 1px 1.25rem 0; }
+      .sb__text { @include mq(phone) { display: none; } }
+      a {
+        position: relative;
+        display: inline-block;
+        font-weight: 400;
+        text-decoration: none;
+      }
+      .sb__link--hire {
+        color: #8a0606;
+        font-weight: 700;
+      }
+    }
+  }
+</style>

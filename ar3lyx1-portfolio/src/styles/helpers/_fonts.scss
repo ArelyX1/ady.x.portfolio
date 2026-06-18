@@ -1,0 +1,3 @@
+@function font-family($key) {
+  @return var(--font-family-#{$key});
+}

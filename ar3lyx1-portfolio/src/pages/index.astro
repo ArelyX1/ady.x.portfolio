@@ -1,5 +1,9 @@
 ---
 import '../home/infrastructure/ui/styles/boot.css';
+import '../styles/variables-css/_colors.scss';
+import SiteHead from '../components/SiteHead.astro';
+import WorkSection from '../components/WorkSection.astro';
+import ContactSection from '../components/ContactSection.astro';
 ---
 
 <html lang="es">
@@ -24,7 +28,11 @@ import '../home/infrastructure/ui/styles/boot.css';
 
     <div id="model-container" style="display:none; position:fixed; inset:0; z-index:75;"></div>
 
-    <div id="portfolio-title" style="display:none; position:fixed; top: 100px; left: 5%; z-index:85; background:#fff; color:#1f1f1f; font-family: 'Ubuntu', monospace; font-weight: 800; letter-spacing:.15em;">
+    <div id="sitehead-container" style="display:none;">
+      <SiteHead />
+    </div>
+
+    <div id="portfolio-title" style="display:none; margin-top:40px; padding-left:5%; background:#fff; color:#1f1f1f; font-family: 'Ubuntu', monospace; font-weight: 800; letter-spacing:.15em;">
       <div id="title-line" style="display:flex; align-items:baseline; gap:15rem;">
         <div id="title-text" style="font-size:clamp(3.5rem,9.5vw,7.5rem); font-weight: 900; height: 0.4em; min-height: 1em; line-height:1; overflow:hidden;"></div>
         <div id="title-sub" style="font-size:clamp(1.25rem,2.5vw,1.75rem); font-weight:700; height: 0.4em; min-height: 1em; line-height:1; overflow:hidden; color:#1f1f1f;"></div>
@@ -35,6 +43,14 @@ import '../home/infrastructure/ui/styles/boot.css';
       <div id="title-phrase" style="font-size:clamp(3.75rem,6vw,4.5rem); font-style: italic; font-weight: 600; overflow:hidden; height: 0.4em; min-height: 1em; line-height:1; margin-top: 0.5rem;"></div>
       <div id="title-phrase-2" style="font-size:clamp(3.75rem,6vw,4.5rem); font-style: italic; font-weight: 600; overflow:hidden; height: 0.4em; min-height: 1em; line-height:1; margin-top: 0.5rem;"></div>
       <div id="title-autor" style="font-size:clamp(3.55rem,5.7vw,4.3rem); font-style: italic; font-weight: 600; overflow:hidden; height: 0.4em; min-height: 1em; line-height:1; margin-top: 0.5rem;"></div>
+    </div>
+
+    <div id="work-wrapper" style="display:none;">
+      <WorkSection />
+    </div>
+
+    <div id="contact-wrapper" style="display:none;">
+      <ContactSection />
     </div>
 
     <div id="white-top" style="position:fixed; top:0; left:0; right:0; height:0; background:#fff; z-index:100;"></div>
@@ -188,6 +204,153 @@ import '../home/infrastructure/ui/styles/boot.css';
       animateTextById('title-phrase-2', "it's better when it's free.\"",0.28);
       animateTextById('title-autor', " - Linus Torvalds -");
       titleDiv.style.opacity = '1';
+
+      setTimeout(() => {
+        document.body.style.overflow = 'auto';
+        document.documentElement.style.overflow = 'auto';
+        const headContainer = document.getElementById('sitehead-container');
+        headContainer.style.display = 'block';
+        const workEl = document.getElementById('work-wrapper');
+        if (workEl) workEl.style.display = 'block';
+        const contactEl = document.getElementById('contact-wrapper');
+        if (contactEl) contactEl.style.display = 'block';
+        // grid init
+        const grid = document.getElementById('ws-grid');
+        if (grid) {
+          const items = [...grid.querySelectorAll('.ws-item')];
+          const back = document.getElementById('ws-back');
+          let expanded = null;
+
+          const binaryLabels = {};
+          items.forEach(i => {
+            const h3 = i.querySelector('.ws-front h3');
+            if (h3) binaryLabels[i.dataset.col + i.dataset.row] = h3.textContent;
+          });
+
+          function flipAnimate(el, toCol, toRow) {
+            const first = el.getBoundingClientRect();
+            el.style.gridColumn = toCol;
+            el.style.gridRow = toRow;
+            const last = el.getBoundingClientRect();
+            const dx = first.left - last.left;
+            const dy = first.top - last.top;
+            const sx = first.width / last.width;
+            const sy = first.height / last.height;
+            return new Promise(r => {
+              const anim = el.animate([
+                { transform: `translate(${dx}px, ${dy}px) scaleX(${sx}) scaleY(${sy})` },
+                { transform: 'translate(0,0) scaleX(1) scaleY(1)' }
+              ], { duration: 600, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' });
+              anim.onfinish = r;
+              anim.oncancel = r;
+            });
+          }
+
+          function setFrontText(item, text) {
+            const h3 = item.querySelector('.ws-front h3');
+            if (h3) h3.textContent = text;
+          }
+
+          function collapse() {
+            if (!expanded) return;
+            const el = expanded;
+            expanded = null;
+            const col = el.dataset.col;
+            const row = el.dataset.row;
+            el.classList.remove('expanding');
+            items.forEach(i => {
+              i.style.gridColumn = '';
+              i.style.gridRow = '';
+              const front = i.querySelector('.ws-front');
+              if (front) front.classList.remove('small');
+              const key = i.dataset.col + i.dataset.row;
+              if (binaryLabels[key]) setFrontText(i, binaryLabels[key]);
+            });
+            const front = el.querySelector('.ws-front h3');
+            const expand = el.querySelector('.ws-expand');
+            if (expand) expand.classList.remove('visible');
+            if (back) back.classList.remove('visible');
+            flipAnimate(el, col, row).then(() => {
+              if (front) front.style.opacity = '1';
+            });
+          }
+
+          items.forEach(item => {
+            item.addEventListener('click', async () => {
+              if (expanded === item) { collapse(); return; }
+              if (expanded) collapse();
+
+              items.forEach(i => {
+                const front = i.querySelector('.ws-front');
+                if (front) front.classList.remove('small');
+                const key = i.dataset.col + i.dataset.row;
+                if (binaryLabels[key]) setFrontText(i, binaryLabels[key]);
+              });
+
+              const col = parseInt(item.dataset.col);
+              const row = parseInt(item.dataset.row);
+              const expandText = item.dataset.expand;
+              const front = item.querySelector('.ws-front h3');
+              const expand = item.querySelector('.ws-expand');
+              if (expand && expandText) expand.textContent = expandText;
+
+              // replace other items' front text with smaller labels
+              const replaces = [item.dataset.r1, item.dataset.r2, item.dataset.r3, item.dataset.r4];
+              if (replaces.some(r => r)) {
+                const targets = items.filter(i => i !== item);
+                targets.forEach((t, idx) => {
+                  if (replaces[idx]) {
+                    setFrontText(t, replaces[idx]);
+                    const ft = t.querySelector('.ws-front');
+                    if (ft) ft.classList.add('small');
+                  }
+                });
+              }
+
+              if (front) front.style.opacity = '0';
+              if (back) back.classList.add('visible');
+
+              const leftSide = col === 1 || (col === 2 && row === 1);
+              const targetCol = leftSide ? '1 / 3' : '2 / 4';
+              const targetRow = '1 / 3';
+
+              await flipAnimate(item, targetCol, targetRow);
+              item.classList.add('expanding');
+
+              if (expand) expand.classList.add('visible');
+              expanded = item;
+            });
+          });
+          if (back) back.addEventListener('click', collapse);
+        }
+        // VHS static for binary separators
+        function vhsStatic(containerSelector) {
+          const spans = document.querySelectorAll(`${containerSelector} span`);
+          if (!spans.length) return;
+          function scramble() {
+            const n = 1 + Math.floor(Math.random() * 3);
+            for (let i = 0; i < n; i++) {
+              const idx = Math.floor(Math.random() * spans.length);
+              const cur = spans[idx].textContent;
+              const flip = cur === '0' ? '1' : '0';
+              spans[idx].textContent = flip;
+              spans[idx].style.opacity = '0.6';
+              setTimeout(() => {
+                spans[idx].textContent = cur;
+                spans[idx].style.opacity = '1';
+              }, 60 + Math.random() * 120);
+            }
+          }
+          setInterval(scramble, 80 + Math.random() * 120);
+        }
+        vhsStatic('.ws-sep');
+        vhsStatic('.cs-sep');
+        setTimeout(() => {
+          document.dispatchEvent(new CustomEvent('intro'));
+        }, 300);
+      }, 300);
     }, 2500);
   });
 </script>
+
+
