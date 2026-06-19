@@ -288,6 +288,113 @@ import ContactSection from '../components/ContactSection.astro';
           let linkRef = null;
           let techIntervals = [];
           let itemInterval = null;
+          let carouselRef = null;
+
+          const neuromorphicImages = [
+            '/project-neuromorphic-cypher/capt1.png',
+            '/project-neuromorphic-cypher/capt2.png',
+            '/project-neuromorphic-cypher/capt3.png',
+            '/project-neuromorphic-cypher/capt4.png',
+            '/project-neuromorphic-cypher/capt5.png',
+            '/project-neuromorphic-cypher/capt6.png',
+            '/project-neuromorphic-cypher/capt7.png',
+          ];
+
+          function initCarousel(expandEl) {
+            const img = expandEl.querySelector('.ws-carousel-img');
+            const viewport = expandEl.querySelector('.ws-carousel-viewport');
+            const prev = expandEl.querySelector('.ws-carousel-prev');
+            const next = expandEl.querySelector('.ws-carousel-next');
+            if (!img || !viewport || !prev || !next) return null;
+
+            let index = 0;
+            let imageMeta = [];
+
+            function loadImageMeta() {
+              return Promise.all(neuromorphicImages.map(src => new Promise(resolve => {
+                const probe = new Image();
+                probe.onload = () => resolve({ src, w: probe.naturalWidth, h: probe.naturalHeight });
+                probe.onerror = () => resolve({ src, w: 1, h: 1 });
+                probe.src = src;
+              })));
+            }
+
+            function targetLongSide() {
+              const availableW = viewport.clientWidth;
+              const availableH = viewport.clientHeight;
+              if (!availableW || !availableH || !imageMeta.length) return 0;
+
+              let target = Infinity;
+              imageMeta.forEach(meta => {
+                const maxSide = Math.max(meta.w, meta.h);
+                target = Math.min(
+                  target,
+                  availableW * maxSide / meta.w,
+                  availableH * maxSide / meta.h
+                );
+              });
+              return target;
+            }
+
+            function fitCurrentImage() {
+              const meta = imageMeta[index];
+              if (!meta) return;
+              const longSide = targetLongSide();
+              if (!longSide) return;
+              const maxSide = Math.max(meta.w, meta.h);
+              const scale = longSide / maxSide;
+              img.style.width = `${meta.w * scale}px`;
+              img.style.height = `${meta.h * scale}px`;
+            }
+
+            function show(nextIndex) {
+              index = (nextIndex + neuromorphicImages.length) % neuromorphicImages.length;
+              const meta = imageMeta[index];
+              if (!meta) return;
+              img.src = meta.src;
+              img.alt = `Neuromorphic Computing Cryptography ${index + 1}`;
+              if (img.complete) fitCurrentImage();
+              else img.onload = fitCurrentImage;
+            }
+
+            const onPrev = event => {
+              event.stopPropagation();
+              show(index - 1);
+            };
+            const onNext = event => {
+              event.stopPropagation();
+              show(index + 1);
+            };
+            const onResize = () => fitCurrentImage();
+
+            prev.addEventListener('click', onPrev);
+            next.addEventListener('click', onNext);
+            window.addEventListener('resize', onResize);
+
+            loadImageMeta().then(meta => {
+              imageMeta = meta;
+              show(0);
+            });
+
+            return {
+              reset() { show(0); },
+              cleanup() {
+                prev.removeEventListener('click', onPrev);
+                next.removeEventListener('click', onNext);
+                window.removeEventListener('resize', onResize);
+                img.onload = null;
+                img.style.width = '';
+                img.style.height = '';
+              },
+            };
+          }
+
+          function cleanupCarousel() {
+            if (carouselRef) {
+              carouselRef.cleanup();
+              carouselRef = null;
+            }
+          }
 
           function renderTechColumns(cell, text) {
             const h3 = cell.querySelector('.ws-front h3');
@@ -384,6 +491,7 @@ import ContactSection from '../components/ContactSection.astro';
             const row = el.dataset.row;
             el.classList.remove('expanding');
             if (linkRef) { linkRef.remove(); linkRef = null; }
+            cleanupCarousel();
             cleanupTechSelection();
             if (itemInterval) { clearInterval(itemInterval); itemInterval = null; }
             items.forEach(i => i.classList.remove('hacker-sel'));
@@ -431,7 +539,9 @@ import ContactSection from '../components/ContactSection.astro';
               const expandText = item.dataset.expand;
               const front = item.querySelector('.ws-front h3');
               const expand = item.querySelector('.ws-expand');
-              if (expand && expandText) expand.textContent = expandText;
+              if (expand && expandText && !expand.classList.contains('ws-carousel')) {
+                expand.textContent = expandText;
+              }
 
               // replace other items' front text with smaller labels
               const replaces = [item.dataset.r1, item.dataset.r2, item.dataset.r3, item.dataset.r4];
@@ -469,7 +579,13 @@ import ContactSection from '../components/ContactSection.astro';
               setTimeout(() => { animating = false; }, 500);
               item.classList.add('expanding');
 
-              if (expand) expand.classList.add('visible');
+              if (expand) {
+                expand.classList.add('visible');
+                if (expand.classList.contains('ws-carousel')) {
+                  cleanupCarousel();
+                  carouselRef = initCarousel(expand);
+                }
+              }
               expanded = item;
 
               setTimeout(() => startTechSelection(), 3000);
@@ -482,9 +598,10 @@ import ContactSection from '../components/ContactSection.astro';
                 ghLink.target = '_blank';
                 ghLink.rel = 'noopener noreferrer';
                 ghLink.innerHTML = '<svg viewBox="0 0 16 16" width="44" height="44" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>';
-                ghLink.style.cssText = 'position:absolute;bottom:1rem;right:1rem;z-index:30;color:inherit;opacity:0.7;transition:opacity 0.2s;pointer-events:auto;';
+                ghLink.style.cssText = 'position:absolute;left:50%;bottom:1rem;transform:translateX(-50%);z-index:30;color:inherit;opacity:0.9;transition:opacity 0.2s;pointer-events:auto;';
                 ghLink.addEventListener('mouseenter', () => ghLink.style.opacity = '1');
                 ghLink.addEventListener('mouseleave', () => ghLink.style.opacity = '0.7');
+                ghLink.addEventListener('click', event => event.stopPropagation());
                 item.appendChild(ghLink);
                 linkRef = ghLink;
               }
