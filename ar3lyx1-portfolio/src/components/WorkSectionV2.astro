@@ -1,0 +1,164 @@
+<section id="work-v2" class="wv2">
+  <div class="wv2-row" data-canvas-color="#f5f0e8">
+    <div class="wv2-item left">Neuromorphic Computing Cryptography</div>
+    <div class="wv2-item right">Freelance ⋆ 2026</div>
+  </div>
+  <div class="wv2-row" data-canvas-color="#e8f0f5">
+    <div class="wv2-item left">Leadership Data Recolector</div>
+    <div class="wv2-item right">Lidercom Peru S.A.C. ⋆ 2026</div>
+  </div>
+  <div class="wv2-row" data-canvas-color="#f0f5e8">
+    <div class="wv2-item left">Go Bubble</div>
+    <div class="wv2-item right">Global Game Jam ⋆ 2025</div>
+  </div>
+  <div class="wv2-row" data-canvas-color="#f5ece8">
+    <div class="wv2-item left">Financial Activity Register</div>
+    <div class="wv2-item right">Caja Incasur ⋆ 2026</div>
+  </div>
+  <div class="wv2-row" data-canvas-color="#e8f5f2">
+    <div class="wv2-item left">Resource Monitor for Data Bases</div>
+    <div class="wv2-item right">ERP of Universidad Católica de Santa María ⋆ 2025</div>
+  </div>
+  <div class="wv2-row" data-canvas-color="#f2e8f5">
+    <div class="wv2-item left">Blockchain LAN Node</div>
+    <div class="wv2-item right">Freelance ⋆ 2025</div>
+  </div>
+  <div class="wv2-row" data-canvas-color="#e8f5f5">
+    <div class="wv2-item left">The Misti's Heart</div>
+    <div class="wv2-item right">Volcan Game Jam ⋆ 2025</div>
+  </div>
+</section>
+
+<style>
+  .wv2 {
+    font-family: 'Ubuntu', monospace;
+    padding: 3rem 0;
+    position: relative;
+  }
+  .wv2-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 0;
+    transition: background 0.2s ease, box-shadow 0.2s ease;
+    border-radius: 4px;
+    cursor: pointer;
+    position: relative;
+    z-index: 2;
+  }
+  .wv2-row:hover,
+  .wv2-row.selected {
+    background: rgba(0, 0, 0, 0.03);
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
+  }
+  .wv2-item {
+    padding: 1rem 0;
+    font-size: clamp(0.85rem, 1.6vw, 1.15rem);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    user-select: none;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+  .wv2-item.left {
+    padding-left: 2vw;
+    text-align: left;
+    color: #1f1f1f;
+  }
+  .wv2-item.right {
+    padding-right: 2vw;
+    text-align: right;
+    color: #666;
+  }
+  :global(.wv2-canvas) {
+    position: absolute;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+    z-index: 10;
+    border-radius: 4px;
+  }
+  :global(.wv2-canvas.open) {
+    opacity: 1;
+    pointer-events: auto;
+  }
+</style>
+
+<script>
+  const section = document.getElementById('work-v2');
+  const workBlock = document.getElementById('work-wrapper');
+  const rows = section?.querySelectorAll('.wv2-row') ?? [];
+
+  if (workBlock) workBlock.style.position = 'relative';
+
+  const canvas = document.createElement('canvas');
+  canvas.className = 'wv2-canvas';
+  workBlock?.appendChild(canvas);
+
+  // ── Ajusta aquí ancho, alto y márgenes del canvas ──
+  const CANVAS_W = 160;
+  const HEIGHT_RATIO = 0.72;
+  const HEIGHT_PADDING = 32;
+  // ─────────────────────────────────────────────────
+
+  function positionCanvas() {
+    if (!canvas || !workBlock) return;
+
+    const blockRect = workBlock.getBoundingClientRect();
+    const viewportCenterX = window.innerWidth / 2;
+    const canvasH = workBlock.offsetHeight * HEIGHT_RATIO - HEIGHT_PADDING;
+
+    canvas.style.width = `${CANVAS_W}px`;
+    canvas.style.height = `${canvasH}px`;
+    canvas.style.left = `${viewportCenterX - blockRect.left - CANVAS_W / 2}px`;
+    canvas.style.top = `${(workBlock.offsetHeight - canvasH) / 2}px`;
+  }
+
+  function fillCanvas() {
+    if (!canvas) return;
+    const rect = canvas.getBoundingClientRect();
+    if (rect.width <= 0 || rect.height <= 0) return;
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = Math.round(rect.width * dpr);
+    canvas.height = Math.round(rect.height * dpr);
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.fillStyle = canvas.dataset.color ?? '#ccc';
+    ctx.fillRect(0, 0, rect.width, rect.height);
+  }
+
+  function updateCanvas() {
+    if (!canvas?.classList.contains('open')) return;
+    positionCanvas();
+    fillCanvas();
+  }
+
+  canvas?.addEventListener('click', (e) => e.stopPropagation());
+
+  canvas?.addEventListener('transitionend', (e) => {
+    if (e.propertyName === 'opacity' && canvas.classList.contains('open')) {
+      updateCanvas();
+    }
+  });
+
+  rows.forEach(row => {
+    row.addEventListener('click', () => {
+      const wasSelected = row.classList.contains('selected');
+      rows.forEach(r => r.classList.remove('selected'));
+      if (!wasSelected) {
+        row.classList.add('selected');
+        if (canvas) {
+          canvas.dataset.color = row.dataset.canvasColor;
+          positionCanvas();
+          canvas.classList.add('open');
+          requestAnimationFrame(updateCanvas);
+        }
+      } else if (canvas) {
+        canvas.classList.remove('open');
+      }
+    });
+  });
+
+  window.addEventListener('resize', updateCanvas);
+</script>
