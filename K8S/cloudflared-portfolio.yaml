@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloudflared-portfolio
+  namespace: "2023241041"
+  labels:
+    app: cloudflare-tunnel-portfolio
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cloudflare-tunnel-portfolio
+  template:
+    metadata:
+      labels:
+        app: cloudflare-tunnel-portfolio
+    spec:
+      hostNetwork: true
+      dnsPolicy: Default
+      containers:
+      - name: cloudflared
+        image: cloudflare/cloudflared:latest
+        imagePullPolicy: Always
+        args:
+        - --config
+        - /etc/cloudflared/config.yml
+        - tunnel
+        - --no-autoupdate
+        - run
+        - --token
+        - eyJhIjoiYjk2ZjE2YTY0ZDc5OTJhN2E2OGJjMmRlYjIxNzc1MTUiLCJ0IjoiNDU1MDUxZjItMjg2OC00ODNmLThlYmQtZjIzYWRmMzlkYzQ5IiwicyI6Ik1USm1PR05sTURVdE5qQTBaaTAwTkROakxUa3pPVEl0T1RjNVlqUTBORFU1TURkaiJ9
+        volumeMounts:
+        - mountPath: /etc/cloudflared/config.yml
+          name: tunnel-config
+          subPath: config.yml
+      volumes:
+      - name: tunnel-config
+        configMap:
+          name: cloudflare-tunnel-config-portfolio
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cloudflare-tunnel-config-portfolio
+  namespace: "2023241041"
+data:
+  config.yml: |
+    ingress:
+      - hostname: andry.neravy.us
+        service: http://172.16.10.31:80
+      - service: http_status:404
