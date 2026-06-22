@@ -1,9 +1,4 @@
 <section id="contact" class="cs">
-  <div class="cs-sep" aria-label="101101100101010011">
-    <span>1</span><span>0</span><span>1</span><span>1</span><span>0</span><span>1</span>
-    <span>1</span><span>0</span><span>0</span><span>1</span><span>0</span><span>1</span>
-    <span>0</span><span>1</span><span>0</span><span>0</span><span>1</span><span>1</span>
-  </div>
   <div class="cs-label">> CONTACT</div>
   <div class="cs-content">
     <div class="cs-item">
@@ -38,70 +33,7 @@
     padding: 0.5rem 0 2rem;
     font-family: 'VT323', 'Courier New', monospace;
   }
-  .cs-sep {
-    position: relative;
-    text-align: center;
-    font-size: clamp(0.45rem, 1vw, 0.75rem);
-    font-weight: 700;
-    letter-spacing: 0.8em;
-    padding: 2rem 1.5em 0.3rem;
-    font-family: 'VT323', 'Courier New', monospace;
-    color: #8a0606;
-    animation: vhs-jitter 0.08s infinite;
-    text-shadow:
-      2px 0 #ff004066,
-      -2px 0 #00f0ff66,
-      0 0 6px #8a060633;
-  }
-  .cs-sep::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 2px,
-      rgba(255,255,255,0.04) 2px,
-      rgba(255,255,255,0.04) 4px
-    );
-    pointer-events: none;
-    z-index: 2;
-    animation: scanlines 0.1s infinite linear;
-  }
-  .cs-sep span {
-    display: inline-block;
-    position: relative;
-    transition: color 0.05s;
-  }
-  .cs-sep span:nth-child(odd) {
-    color: #d40808;
-    text-shadow:
-      1px 0 #ff004088,
-      -1px 0 #00f0ff88;
-  }
-  .cs-sep span:nth-child(even) {
-    color: #9a0707;
-    text-shadow:
-      -1px 0 #ff004066,
-      1px 0 #00f0ff66;
-  }
-  @keyframes vhs-jitter {
-    0% { transform: translate(0, 0); }
-    10% { transform: translate(-1px, 0.5px); }
-    20% { transform: translate(1px, -0.3px); }
-    30% { transform: translate(-0.5px, 0.8px); }
-    40% { transform: translate(0.5px, -0.5px); }
-    50% { transform: translate(0, 0); }
-    60% { transform: translate(-0.8px, 0.3px); }
-    70% { transform: translate(0.8px, -0.8px); }
-    80% { transform: translate(-0.3px, 0.5px); }
-    90% { transform: translate(0.3px, -0.3px); }
-    100% { transform: translate(0, 0); }
-  }
-  @keyframes scanlines {
-    0% { background-position: 0 0; }
-    100% { background-position: 0 4px; }
-  }
+
   .cs-content {
     display: flex;
     flex-direction: column;

@@ -70,7 +70,7 @@ if (bootScreen && bootOutput) {
         function typeInit(lineIdx, charIdx, cursorEl) {
           if (charIdx < msgs[lineIdx].length) {
             cursorEl.before(document.createTextNode(msgs[lineIdx][charIdx]));
-            requestAnimationFrame(() => typeInit(lineIdx, charIdx + 1, cursorEl));
+            setTimeout(() => typeInit(lineIdx, charIdx + 1, cursorEl), 40);
           } else {
             cursorEl.remove();
             if (lineIdx + 1 < msgs.length) {
@@ -78,9 +78,8 @@ if (bootScreen && bootOutput) {
               const nextCursor = document.createElement('span');
               nextCursor.className = 'boot-cursor';
               nextLine.appendChild(nextCursor);
-              bootOutput.appendChild(document.createElement('br'));
               bootOutput.appendChild(nextLine);
-              requestAnimationFrame(() => typeInit(lineIdx + 1, 0, nextCursor));
+              setTimeout(() => typeInit(lineIdx + 1, 0, nextCursor), 40);
             } else {
               setTimeout(() => {
                 bootScreen.style.transition = 'opacity 0.3s ease';
@@ -89,7 +88,7 @@ if (bootScreen && bootOutput) {
                   bootScreen.style.display = 'none';
                   window.dispatchEvent(new CustomEvent('bootComplete'));
                 }, 350);
-              }, 300);
+              }, 1000);
             }
           }
         }
@@ -100,7 +99,7 @@ if (bootScreen && bootOutput) {
         firstLine.appendChild(cursor);
         bootOutput.appendChild(firstLine);
         requestAnimationFrame(() => typeInit(0, 0, cursor));
-      }, 300);
+      }, 1000);
     }
   }
 
