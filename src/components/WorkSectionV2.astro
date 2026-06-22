@@ -1,29 +1,29 @@
 <section id="work-v2" class="wv2">
-  <div class="wv2-row" data-canvas-color="#f5f0e8">
+  <div class="wv2-row" data-project="project-neuromorphic-cypher" data-hasback="true">
     <div class="wv2-item left">Neuromorphic Computing Cryptography</div>
     <div class="wv2-item right">Freelance ⋆ 2026</div>
   </div>
-  <div class="wv2-row" data-canvas-color="#e8f0f5">
+  <div class="wv2-row" data-project="project-lidercom" data-hasback="true">
     <div class="wv2-item left">Leadership Data Recolector</div>
     <div class="wv2-item right">Lidercom Peru S.A.C. ⋆ 2026</div>
   </div>
-  <div class="wv2-row" data-canvas-color="#f0f5e8">
+  <div class="wv2-row" data-project="project-go-bubble" data-hasback="true">
     <div class="wv2-item left">Go Bubble</div>
     <div class="wv2-item right">Global Game Jam ⋆ 2025</div>
   </div>
-  <div class="wv2-row" data-canvas-color="#f5ece8">
+  <div class="wv2-row" data-project="project-caja-incasur">
     <div class="wv2-item left">Financial Activity Register</div>
     <div class="wv2-item right">Caja Incasur ⋆ 2026</div>
   </div>
-  <div class="wv2-row" data-canvas-color="#e8f5f2">
+  <div class="wv2-row" data-project="project-resource-monitor">
     <div class="wv2-item left">Resource Monitor for Data Bases</div>
     <div class="wv2-item right">ERP of Universidad Católica de Santa María ⋆ 2025</div>
   </div>
-  <div class="wv2-row" data-canvas-color="#f2e8f5">
+  <div class="wv2-row" data-project="project-blockchain-jam">
     <div class="wv2-item left">Blockchain LAN Node</div>
     <div class="wv2-item right">Freelance ⋆ 2025</div>
   </div>
-  <div class="wv2-row" data-canvas-color="#e8f5f5">
+  <div class="wv2-row" data-project="project-the-mistis-heart">
     <div class="wv2-item left">The Misti's Heart</div>
     <div class="wv2-item right">Volcan Game Jam ⋆ 2025</div>
   </div>
@@ -70,74 +70,537 @@
     text-align: right;
     color: #666;
   }
-  :global(.wv2-canvas) {
+  :global(.wv2-container) {
     position: absolute;
     opacity: 0;
     transition: opacity 0.4s ease;
     pointer-events: none;
     z-index: 10;
     border-radius: 4px;
+    overflow: hidden;
   }
-  :global(.wv2-canvas.open) {
+  :global(.wv2-container.open) {
     opacity: 1;
     pointer-events: auto;
+  }
+  :global(.wv2-container canvas) {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  :global(.wv2-folder) {
+    position: absolute;
+    z-index: 11;
+    width: 48px;
+    height: 48px;
+    cursor: grab;
+    pointer-events: none;
+    user-select: none;
+    touch-action: none;
+  }
+  :global(.wv2-container.open .wv2-folder) {
+    pointer-events: auto;
+  }
+  :global(.wv2-folder img) {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    pointer-events: none;
+  }
+  :global(.wv2-folder:active) {
+    cursor: grabbing;
+  }
+  :global(.wv2-flabel) {
+    position: absolute;
+    z-index: 11;
+    font-family: 'VT323', monospace;
+    font-size: 11px;
+    color: #fff;
+    text-align: center;
+    width: 60px;
+    pointer-events: none;
+    user-select: none;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  :global(.wv2-flabel.open) {
+    opacity: 1;
+  }
+  :global(.wv2-carousel) {
+    position: fixed;
+    z-index: 100;
+    border: 2px solid #fff;
+    background: transparent;
+    min-width: 300px;
+    min-height: 200px;
+    box-shadow: 4px 4px 0 rgba(0,0,0,0.3);
+    display: none;
+    font-family: 'VT323', monospace;
+  }
+  :global(.wv2-carousel.open) {
+    display: block;
+  }
+  :global(.wv2-carousel-titlebar) {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 8px;
+    cursor: move;
+    border-bottom: 2px solid #fff;
+    color: #fff;
+    font-size: 13px;
+    user-select: none;
+  }
+  :global(.wv2-carousel-close) {
+    background: none;
+    border: 1px solid #fff;
+    color: #fff;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1;
+    padding: 0 6px;
+    font-family: inherit;
+  }
+  :global(.wv2-carousel-body) {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+  }
+  :global(.wv2-carousel-body img) {
+    max-width: 100%;
+    max-height: 60vh;
+    object-fit: contain;
+    display: block;
+  }
+  :global(.wv2-carousel-btn) {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: 2px solid #fff;
+    color: #fff;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 4px 10px;
+    font-family: inherit;
+    line-height: 1;
+  }
+  :global(.wv2-carousel-btn:hover) {
+    background: rgba(255,255,255,0.1);
+  }
+  :global(.wv2-carousel-prev) {
+    left: 4px;
+  }
+  :global(.wv2-carousel-next) {
+    right: 4px;
   }
 </style>
 
 <script>
+  import { hover, press, animate } from 'motion';
+
   const section = document.getElementById('work-v2');
   const workBlock = document.getElementById('work-wrapper');
   const rows = section?.querySelectorAll('.wv2-row') ?? [];
 
   if (workBlock) workBlock.style.position = 'relative';
 
+  // ── Container que envuelve canvas + folders ──
+  const container = document.createElement('div');
+  container.className = 'wv2-container';
+  workBlock?.appendChild(container);
+
   const canvas = document.createElement('canvas');
-  canvas.className = 'wv2-canvas';
-  workBlock?.appendChild(canvas);
+  container.appendChild(canvas);
 
-  // ── Ajusta aquí ancho, alto y márgenes del canvas ──
-  const CANVAS_W = 160;
-  const HEIGHT_RATIO = 0.72;
-  const HEIGHT_PADDING = 32;
-  // ─────────────────────────────────────────────────
+  // ── Rectangular canvas (wider than tall) ──
+  const BASE_RATIO = 0.85;
+  const BASE_PADDING = 32;
+  const WIDTH_MULT = 1.7;
 
-  function positionCanvas() {
-    if (!canvas || !workBlock) return;
-
-    const blockRect = workBlock.getBoundingClientRect();
-    const viewportCenterX = window.innerWidth / 2;
-    const canvasH = workBlock.offsetHeight * HEIGHT_RATIO - HEIGHT_PADDING;
-
-    canvas.style.width = `${CANVAS_W}px`;
-    canvas.style.height = `${canvasH}px`;
-    canvas.style.left = `${viewportCenterX - blockRect.left - CANVAS_W / 2}px`;
-    canvas.style.top = `${(workBlock.offsetHeight - canvasH) / 2}px`;
+  function getCanvasSize() {
+    if (!workBlock) return { w: 300, h: 300 };
+    const base = workBlock.offsetHeight * BASE_RATIO - BASE_PADDING;
+    return { w: base * WIDTH_MULT, h: base };
   }
 
-  function fillCanvas() {
+  function positionCanvas() {
+    if (!container || !workBlock) return;
+    const blockRect = workBlock.getBoundingClientRect();
+    const viewportCenterX = window.innerWidth / 2;
+    const { w, h } = getCanvasSize();
+
+    container.style.width = `${w}px`;
+    container.style.height = `${h}px`;
+    container.style.left = `${viewportCenterX - blockRect.left - w / 2}px`;
+    container.style.top = `${(workBlock.offsetHeight - h) / 2 + 40}px`;
+  }
+
+  // ── Node network animation ──
+  const NODE_COUNT = 80;
+  const CONNECTION_DIST = 130;
+  const NODE_SPEED = 0.4;
+  let nodes = [];
+  let animId = null;
+
+  function initNodes(w, h) {
+    nodes = [];
+    for (let i = 0; i < NODE_COUNT; i++) {
+      nodes.push({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        vx: (Math.random() - 0.5) * NODE_SPEED,
+        vy: (Math.random() - 0.5) * NODE_SPEED,
+      });
+    }
+  }
+
+  function drawNetwork() {
     if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
     if (rect.width <= 0 || rect.height <= 0) return;
     const dpr = window.devicePixelRatio || 1;
-    canvas.width = Math.round(rect.width * dpr);
-    canvas.height = Math.round(rect.height * dpr);
+    if (canvas.width !== Math.round(rect.width * dpr) || canvas.height !== Math.round(rect.height * dpr)) {
+      canvas.width = Math.round(rect.width * dpr);
+      canvas.height = Math.round(rect.height * dpr);
+    }
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.fillStyle = canvas.dataset.color ?? '#ccc';
+
+    // Background
+    ctx.fillStyle = '#332828';
     ctx.fillRect(0, 0, rect.width, rect.height);
+
+    // Update nodes
+    for (const n of nodes) {
+      n.x += n.vx;
+      n.y += n.vy;
+      if (n.x < 0 || n.x > rect.width) n.vx *= -1;
+      if (n.y < 0 || n.y > rect.height) n.vy *= -1;
+    }
+
+    // Draw connections
+    ctx.strokeStyle = '#e6e6e6';
+    ctx.lineWidth = 0.6;
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        const dx = nodes[i].x - nodes[j].x;
+        const dy = nodes[i].y - nodes[j].y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < CONNECTION_DIST) {
+          const alpha = 1 - dist / CONNECTION_DIST;
+          ctx.globalAlpha = alpha * 0.5;
+          ctx.beginPath();
+          ctx.moveTo(nodes[i].x, nodes[i].y);
+          ctx.lineTo(nodes[j].x, nodes[j].y);
+          ctx.stroke();
+        }
+      }
+    }
+
+    // Draw nodes
+    ctx.globalAlpha = 0.8;
+    ctx.fillStyle = '#e6e6e6';
+    for (const n of nodes) {
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, 2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    ctx.globalAlpha = 1;
+    animId = requestAnimationFrame(drawNetwork);
   }
 
+  function startAnimation() {
+    if (!canvas) return;
+    const rect = canvas.getBoundingClientRect();
+    if (rect.width > 0 && rect.height > 0) {
+      initNodes(rect.width, rect.height);
+    } else {
+      initNodes(300, 300);
+    }
+    if (animId) cancelAnimationFrame(animId);
+    drawNetwork();
+  }
+
+  function stopAnimation() {
+    if (animId) {
+      cancelAnimationFrame(animId);
+      animId = null;
+    }
+  }
+
+  // ── Folder image components ──
+  const folderData = [
+    { name: 'git', src: '/folderGit.png', label: 'Description' },
+    { name: 'img', src: '/folderImg.png', label: 'Frontend' },
+    { name: 'back', src: '/folderBack.png', label: 'Backend' },
+  ];
+
+  const folderEls = [];
+  const folderLabels = [];
+
+  function createFolderComponents() {
+    if (!container) return;
+    folderData.forEach((f, i) => {
+      const el = document.createElement('div');
+      el.className = 'wv2-folder';
+      el.dataset.folder = f.name;
+
+      const img = document.createElement('img');
+      img.src = f.src;
+      img.alt = f.name;
+      el.appendChild(img);
+
+      container.appendChild(el);
+      folderEls.push(el);
+
+      const lbl = document.createElement('div');
+      lbl.className = 'wv2-flabel';
+      lbl.textContent = f.label;
+      container.appendChild(lbl);
+      folderLabels.push(lbl);
+
+      // Hover gesture
+      hover(el, {
+        onHoverStart: () => {
+          animate(el, { scale: 1.15 }, { duration: 0.2, easing: 'ease-out' });
+        },
+        onHoverEnd: () => {
+          animate(el, { scale: 1 }, { duration: 0.2, easing: 'ease-out' });
+        },
+      });
+
+      // Press gesture
+      press(el, {
+        onPressStart: () => {
+          animate(el, { scale: 0.9 }, { duration: 0.1, easing: 'ease-out' });
+        },
+        onPressEnd: () => {
+          animate(el, { scale: 1 }, { duration: 0.15, easing: 'ease-out' });
+        },
+      });
+
+      // Drag with pointer events (clamped inside canvas)
+      let dragging = false;
+      let startX, startY, origX, origY;
+      const folderSize = 48;
+
+      el.addEventListener('pointerdown', (e) => {
+        dragging = true;
+        el.setPointerCapture(e.pointerId);
+        startX = e.clientX;
+        startY = e.clientY;
+        origX = parseFloat(el.style.left) || 0;
+        origY = parseFloat(el.style.top) || 0;
+      });
+
+      el.addEventListener('pointermove', (e) => {
+        if (!dragging || !container) return;
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        const cw = container.clientWidth;
+        const ch = container.clientHeight;
+        let newLeft = origX + dx;
+        let newTop = origY + dy;
+        newLeft = Math.max(0, Math.min(cw - folderSize, newLeft));
+        newTop = Math.max(0, Math.min(ch - folderSize, newTop));
+        el.style.left = `${newLeft}px`;
+        el.style.top = `${newTop}px`;
+      });
+
+      el.addEventListener('pointerup', () => {
+        dragging = false;
+      });
+
+      el.addEventListener('pointercancel', () => {
+        dragging = false;
+      });
+    });
+
+    // Click handlers
+    if (f.name === 'img') {
+      el.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        if (!currentProject) return;
+        const imgs = await loadProjectImages(currentProject);
+        if (imgs.length > 0) showCarousel(imgs, `/${currentProject}`);
+      });
+    }
+    if (f.name === 'back') {
+      el.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        if (!currentProject) return;
+        const imgs = await loadProjectImages(`${currentProject}/back`);
+        if (imgs.length > 0) showCarousel(imgs, `/${currentProject}/back`);
+      });
+    }
+  }
+
+  function positionFolders(cw, ch) {
+    const folderSize = 48;
+    const gap = 8;
+    const labelGap = 2;
+    const positions = [
+      { left: gap, top: ch - folderSize - gap },
+      { left: cw / 2 - folderSize / 2, top: ch - folderSize - gap },
+      { left: cw - folderSize - gap, top: ch - folderSize - gap },
+    ];
+    folderEls.forEach((el, i) => {
+      const pos = positions[i];
+      el.style.left = `${pos.left}px`;
+      el.style.top = `${pos.top}px`;
+      // Position label below the folder icon
+      const lbl = folderLabels[i];
+      if (lbl) {
+        lbl.style.left = `${pos.left - 6}px`;
+        lbl.style.top = `${pos.top + folderSize + labelGap}px`;
+      }
+    });
+  }
+
+  function showFolders() {
+    folderEls.forEach(el => el.classList.add('open'));
+    folderLabels.forEach(el => el.classList.add('open'));
+  }
+
+  function hideFolders() {
+    folderEls.forEach(el => {
+      el.classList.remove('open');
+      el.style.left = '';
+      el.style.top = '';
+    });
+    folderLabels.forEach(el => {
+      el.classList.remove('open');
+      el.style.left = '';
+      el.style.top = '';
+    });
+  }
+
+  // ── Carousel window ──
+  let currentProject = '';
+  let carouselImages = [];
+  let carouselIndex = 0;
+
+  const carousel = document.createElement('div');
+  carousel.className = 'wv2-carousel';
+  const titlebar = document.createElement('div');
+  titlebar.className = 'wv2-carousel-titlebar';
+  const titleSpan = document.createElement('span');
+  titleSpan.textContent = 'images';
+  const closeBtn = document.createElement('button');
+  closeBtn.className = 'wv2-carousel-close';
+  closeBtn.textContent = '×';
+  titlebar.appendChild(titleSpan);
+  titlebar.appendChild(closeBtn);
+  const body = document.createElement('div');
+  body.className = 'wv2-carousel-body';
+  const carouselImg = document.createElement('img');
+  const prevBtn = document.createElement('button');
+  prevBtn.className = 'wv2-carousel-btn wv2-carousel-prev';
+  prevBtn.textContent = '◀';
+  const nextBtn = document.createElement('button');
+  nextBtn.className = 'wv2-carousel-btn wv2-carousel-next';
+  nextBtn.textContent = '▶';
+  body.appendChild(prevBtn);
+  body.appendChild(carouselImg);
+  body.appendChild(nextBtn);
+  carousel.appendChild(titlebar);
+  carousel.appendChild(body);
+  document.body.appendChild(carousel);
+
+  function showCarousel(images, title) {
+    if (images.length === 0) return;
+    carouselImages = images;
+    carouselIndex = 0;
+    titleSpan.textContent = title;
+    carouselImg.src = images[0];
+    carousel.style.left = '120px';
+    carousel.style.top = '120px';
+    carousel.classList.add('open');
+  }
+
+  function closeCarousel() {
+    carousel.classList.remove('open');
+    carouselImages = [];
+  }
+
+  closeBtn.addEventListener('click', closeCarousel);
+
+  prevBtn.addEventListener('click', () => {
+    if (carouselImages.length === 0) return;
+    carouselIndex = (carouselIndex - 1 + carouselImages.length) % carouselImages.length;
+    carouselImg.src = carouselImages[carouselIndex];
+  });
+
+  nextBtn.addEventListener('click', () => {
+    if (carouselImages.length === 0) return;
+    carouselIndex = (carouselIndex + 1) % carouselImages.length;
+    carouselImg.src = carouselImages[carouselIndex];
+  });
+
+  // Drag carousel by titlebar only
+  let carDrag = false;
+  let carStartX, carStartY, carOrigX, carOrigY;
+
+  titlebar.addEventListener('pointerdown', (e) => {
+    carDrag = true;
+    titlebar.setPointerCapture(e.pointerId);
+    carStartX = e.clientX;
+    carStartY = e.clientY;
+    carOrigX = parseInt(carousel.style.left) || 0;
+    carOrigY = parseInt(carousel.style.top) || 0;
+  });
+
+  titlebar.addEventListener('pointermove', (e) => {
+    if (!carDrag) return;
+    carousel.style.left = `${carOrigX + e.clientX - carStartX}px`;
+    carousel.style.top = `${carOrigY + e.clientY - carStartY}px`;
+  });
+
+  titlebar.addEventListener('pointerup', () => { carDrag = false; });
+  titlebar.addEventListener('pointercancel', () => { carDrag = false; });
+
+  // ── Image loading helper ──
+  function loadProjectImages(folder) {
+    const exts = ['png', 'jpeg', 'jpg'];
+    const prefixes = ['img', 'capt'];
+    const candidates = [];
+    for (const prefix of prefixes) {
+      for (let i = 1; i <= 20; i++) {
+        for (const ext of exts) {
+          candidates.push(`/${folder}/${prefix}${i}.${ext}`);
+        }
+      }
+    }
+    return Promise.all(candidates.map((path) => {
+      return new Promise((res) => {
+        const img = new Image();
+        img.onload = () => res(path);
+        img.onerror = () => res(null);
+        img.src = path;
+      });
+    })).then((results) => results.filter(Boolean));
+  }
+
+  // ── Fill & update ──
   function updateCanvas() {
-    if (!canvas?.classList.contains('open')) return;
+    if (!container?.classList.contains('open')) return;
     positionCanvas();
-    fillCanvas();
+    const rect = container.getBoundingClientRect();
+    initNodes(rect.width, rect.height);
+    positionFolders(rect.width, rect.height);
+    if (animId) cancelAnimationFrame(animId);
+    drawNetwork();
   }
 
-  canvas?.addEventListener('click', (e) => e.stopPropagation());
+  container?.addEventListener('click', (e) => e.stopPropagation());
 
-  canvas?.addEventListener('transitionend', (e) => {
-    if (e.propertyName === 'opacity' && canvas.classList.contains('open')) {
+  container?.addEventListener('transitionend', (e) => {
+    if (e.propertyName === 'opacity' && container.classList.contains('open')) {
       updateCanvas();
     }
   });
@@ -148,17 +611,30 @@
       rows.forEach(r => r.classList.remove('selected'));
       if (!wasSelected) {
         row.classList.add('selected');
-        if (canvas) {
-          canvas.dataset.color = row.dataset.canvasColor;
+        currentProject = row.dataset.project || '';
+        const hasBack = row.dataset.hasback === 'true';
+        if (folderEls[2]) folderEls[2].style.display = hasBack ? '' : 'none';
+        if (folderLabels[2]) folderLabels[2].style.display = hasBack ? '' : 'none';
+        if (container) {
           positionCanvas();
-          canvas.classList.add('open');
+          container.classList.add('open');
           requestAnimationFrame(updateCanvas);
+          showFolders();
         }
-      } else if (canvas) {
-        canvas.classList.remove('open');
+      } else {
+        currentProject = '';
+        if (container) {
+          container.classList.remove('open');
+          stopAnimation();
+          hideFolders();
+        }
       }
     });
   });
 
-  window.addEventListener('resize', updateCanvas);
+  window.addEventListener('resize', () => {
+    if (container?.classList.contains('open')) updateCanvas();
+  });
+
+  createFolderComponents();
 </script>
