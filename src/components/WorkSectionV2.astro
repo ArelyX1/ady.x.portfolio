@@ -11,10 +11,6 @@
     <div class="wv2-item left">Go Bubble</div>
     <div class="wv2-item right">Global Game Jam ⋆ 2025</div>
   </div>
-  <div class="wv2-row" data-project="project-caja-incasur">
-    <div class="wv2-item left">Financial Activity Register</div>
-    <div class="wv2-item right">Caja Incasur ⋆ 2026</div>
-  </div>
   <div class="wv2-row" data-project="project-resource-monitor">
     <div class="wv2-item left">Resource Monitor for Data Bases</div>
     <div class="wv2-item right">ERP of Universidad Católica de Santa María ⋆ 2025</div>
@@ -70,31 +66,57 @@
     text-align: right;
     color: #666;
   }
+
   :global(.wv2-container) {
     position: absolute;
     opacity: 0;
     transition: opacity 0.4s ease;
     pointer-events: none;
     z-index: 10;
-    border-radius: 4px;
-    overflow: hidden;
+    display: flex;
+    gap: 4px;
+    background: transparent;
   }
   :global(.wv2-container.open) {
     opacity: 1;
     pointer-events: auto;
   }
-  :global(.wv2-container canvas) {
+
+  :global(.wv2-panel) {
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  :global(.wv2-panel.left) {
+    flex: 3;
+    border: 2px solid #000;
+  }
+  :global(.wv2-panel.center),
+  :global(.wv2-panel.right) {
+    flex: 4;
+    background: #c0c0c0;
+    border: 2px solid #000;
+    box-shadow:
+      inset 1px 1px 0 #fff,
+      inset -1px -1px 0 #808080;
+  }
+  :global(.wv2-panel.right) {
+    flex: 2.5;
+  }
+  :global(.wv2-panel canvas) {
     display: block;
     width: 100%;
     height: 100%;
   }
+
   :global(.wv2-folder-wrap) {
     position: absolute;
     z-index: 11;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 6px;
+    gap: 4px;
     cursor: grab;
     pointer-events: none;
     user-select: none;
@@ -107,8 +129,8 @@
     cursor: grabbing;
   }
   :global(.wv2-folder) {
-    width: 144px;
-    height: 144px;
+    width: 110px;
+    height: 110px;
   }
   :global(.wv2-folder img) {
     width: 100%;
@@ -120,25 +142,27 @@
   }
   :global(.wv2-flabel) {
     font-family: 'VT323', monospace;
-    font-size: 16px;
+    font-size: 20px;
     color: #fff;
     text-align: center;
-    width: 160px;
+    width: 130px;
     pointer-events: none;
     user-select: none;
     opacity: 0;
     transition: opacity 0.4s ease;
+    text-shadow: 1px 1px 0 #000;
   }
   :global(.wv2-folder-wrap.open .wv2-flabel) {
     opacity: 1;
   }
+
   @keyframes win-open {
     0% { scale: 0; opacity: 0; }
     100% { scale: 1; opacity: 1; }
   }
 
   :global(.wv2-carousel) {
-    position: fixed;
+    position: absolute;
     z-index: 100;
     background: #c0c0c0;
     box-shadow: 8px 8px 0 rgba(0,0,0,0.3);
@@ -207,6 +231,132 @@
   :global(.wv2-carousel-next) {
     right: 4px;
   }
+
+  :global(.wv2-tech-grid) {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    gap: 8px;
+    padding: 12px;
+    height: 100%;
+    box-sizing: border-box;
+    overflow-y: auto;
+  }
+  :global(.wv2-tech-icon) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 110px;
+    cursor: pointer;
+    padding: 4px;
+    user-select: none;
+  }
+  :global(.wv2-tech-icon img) {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    pointer-events: none;
+    image-rendering: pixelated;
+  }
+  :global(.wv2-tech-icon span) {
+    font-family: 'VT323', monospace;
+    font-size: 20px;
+    color: #000;
+    text-align: center;
+    word-break: break-all;
+    line-height: 1.2;
+    margin-top: 2px;
+  }
+  :global(.wv2-tech-icon.selected) {
+    background: #000080;
+  }
+  :global(.wv2-tech-icon.selected span) {
+    color: #fff;
+  }
+
+  :global(.wv2-panel.right) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 12px;
+    box-sizing: border-box;
+  }
+  :global(.wv2-file-icon) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+    padding: 6px;
+  }
+  :global(.wv2-file-icon img),
+  :global(.wv2-file-icon svg) {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    pointer-events: none;
+    image-rendering: pixelated;
+  }
+  :global(.wv2-file-icon span) {
+    font-family: 'VT323', monospace;
+    font-size: 20px;
+    color: #000;
+    text-align: center;
+    margin-top: 2px;
+  }
+  :global(.wv2-file-icon.selected) {
+    background: #000080;
+  }
+  :global(.wv2-file-icon.selected span) {
+    color: #fff;
+  }
+
+  :global(.wv2-postit) {
+    position: absolute;
+    z-index: 90;
+    width: 520px;
+    min-height: 280px;
+    background: #fffacd;
+    border: 2px solid #000;
+    box-shadow: 6px 6px 0 rgba(0,0,0,0.25);
+    font-family: 'VT323', monospace;
+    display: none;
+    transform: rotate(-1deg);
+  }
+  :global(.wv2-postit.open) {
+    display: block;
+  }
+  :global(.wv2-postit-titlebar) {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 10px;
+    cursor: move;
+    border-bottom: 2px solid #000;
+    background: #fffacd;
+    user-select: none;
+    font-size: 20px;
+    color: #000;
+  }
+  :global(.wv2-postit-close) {
+    background: none;
+    border: 1px solid #000;
+    color: #000;
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+    padding: 1px 8px;
+    font-family: inherit;
+  }
+  :global(.wv2-postit-body) {
+    padding: 16px;
+    font-size: 22px;
+    color: #333;
+    line-height: 1.5;
+    white-space: pre-wrap;
+  }
 </style>
 
 <script>
@@ -218,15 +368,34 @@
 
   if (workBlock) workBlock.style.position = 'relative';
 
-  // ── Container que envuelve canvas + folders ──
+  // ── Container (transparent bg, flex row with 3 panels) ──
   const container = document.createElement('div');
   container.className = 'wv2-container';
   workBlock?.appendChild(container);
 
-  const canvas = document.createElement('canvas');
-  container.appendChild(canvas);
+  // Panel 1: Folders + network animation
+  const panelLeft = document.createElement('div');
+  panelLeft.className = 'wv2-panel left';
+  container.appendChild(panelLeft);
 
-  // ── Rectangular canvas (wider than tall) ──
+  const canvas = document.createElement('canvas');
+  panelLeft.appendChild(canvas);
+
+  // Panel 2: Tech icons
+  const panelCenter = document.createElement('div');
+  panelCenter.className = 'wv2-panel center';
+  container.appendChild(panelCenter);
+
+  const techGrid = document.createElement('div');
+  techGrid.className = 'wv2-tech-grid';
+  panelCenter.appendChild(techGrid);
+
+  // Panel 3: README + GitHub + Web
+  const panelRight = document.createElement('div');
+  panelRight.className = 'wv2-panel right';
+  container.appendChild(panelRight);
+
+  // ── Container sizing (same as before) ──
   const BASE_RATIO = 0.85;
   const BASE_PADDING = 32;
   const WIDTH_MULT = 1.7;
@@ -237,7 +406,7 @@
     return { w: base * WIDTH_MULT, h: base };
   }
 
-  function positionCanvas() {
+  function positionContainer() {
     if (!container || !workBlock) return;
     const blockRect = workBlock.getBoundingClientRect();
     const viewportCenterX = window.innerWidth / 2;
@@ -249,7 +418,7 @@
     container.style.top = `${(workBlock.offsetHeight - h) / 2 + 40}px`;
   }
 
-  // ── Node network animation ──
+  // ── Node network animation (in panelLeft) ──
   const NODE_COUNT = 80;
   const CONNECTION_DIST = 130;
   const NODE_SPEED = 0.4;
@@ -281,11 +450,9 @@
     if (!ctx) return;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-    // Background
     ctx.fillStyle = '#332828';
     ctx.fillRect(0, 0, rect.width, rect.height);
 
-    // Update nodes
     for (const n of nodes) {
       n.x += n.vx;
       n.y += n.vy;
@@ -293,7 +460,6 @@
       if (n.y < 0 || n.y > rect.height) n.vy *= -1;
     }
 
-    // Draw connections
     ctx.strokeStyle = '#e6e6e6';
     ctx.lineWidth = 0.6;
     for (let i = 0; i < nodes.length; i++) {
@@ -312,7 +478,6 @@
       }
     }
 
-    // Draw nodes
     ctx.globalAlpha = 0.8;
     ctx.fillStyle = '#e6e6e6';
     for (const n of nodes) {
@@ -344,9 +509,8 @@
     }
   }
 
-  // ── Folder components (wrap = icon + label in one container) ──
+  // ── Folder components ──
   const folderData = [
-    { name: 'git', src: '/folderGit.png', label: 'Description' },
     { name: 'img', src: '/folderImg.png', label: 'Frontend' },
     { name: 'back', src: '/folderBack.png', label: 'Backend' },
   ];
@@ -354,7 +518,7 @@
   const folderWraps = [];
 
   function createFolderComponents() {
-    if (!container) return;
+    if (!panelLeft) return;
     folderData.forEach((f) => {
       const wrap = document.createElement('div');
       wrap.className = 'wv2-folder-wrap';
@@ -372,24 +536,21 @@
       lbl.textContent = f.label;
       wrap.appendChild(lbl);
 
-      container.appendChild(wrap);
+      panelLeft.appendChild(wrap);
       folderWraps.push(wrap);
 
-      // Hover gesture (Motion)
       hover(wrap, {
         onHoverStart: () => { animate(wrap, { scale: 1.15 }, { duration: 0.2, easing: 'ease-out' }); },
         onHoverEnd: () => { animate(wrap, { scale: 1 }, { duration: 0.2, easing: 'ease-out' }); },
       });
 
-      // Press gesture (Motion)
       press(wrap, {
         onPressStart: () => { animate(wrap, { scale: 0.9 }, { duration: 0.1, easing: 'ease-out' }); },
         onPressEnd: () => { animate(wrap, { scale: 1 }, { duration: 0.15, easing: 'ease-out' }); },
       });
 
-      // Drag with pointer events (clamped inside container)
       let dragging = false, startX, startY, origX, origY;
-      const ww = 144, wh = 144 + 30;
+      const ww = 110, wh = 110 + 24;
 
       wrap.addEventListener('pointerdown', (e) => {
         dragging = true;
@@ -400,10 +561,10 @@
       });
 
       wrap.addEventListener('pointermove', (e) => {
-        if (!dragging || !container) return;
-        const cr = container.getBoundingClientRect();
-        const nl = Math.max(0, Math.min(cr.width - ww, origX + e.clientX - startX));
-        const nt = Math.max(0, Math.min(cr.height - wh, origY + e.clientY - startY));
+        if (!dragging || !panelLeft) return;
+        const pr = panelLeft.getBoundingClientRect();
+        const nl = Math.max(0, Math.min(pr.width - ww, origX + e.clientX - startX));
+        const nt = Math.max(0, Math.min(pr.height - wh, origY + e.clientY - startY));
         wrap.style.left = `${nl}px`;
         wrap.style.top = `${nt}px`;
       });
@@ -411,7 +572,6 @@
       wrap.addEventListener('pointerup', () => { dragging = false; });
       wrap.addEventListener('pointercancel', () => { dragging = false; });
 
-      // Click handler
       wrap.addEventListener('click', (e) => {
         e.stopPropagation();
         if (!currentProject) return;
@@ -422,15 +582,12 @@
   }
 
   function positionFolders(cw, ch) {
-    const ww = 144, gap = 16, wh = 144 + 30;
-    const positions = [
-      { left: gap, top: ch - wh - gap },
-      { left: cw / 2 - ww / 2, top: ch - wh - gap },
-      { left: cw - ww - gap, top: ch - wh - gap },
-    ];
+    const ww = 110, gap = 12, wh = 110 + 24;
+    const totalW = folderWraps.length * ww + (folderWraps.length - 1) * gap;
+    const startX = (cw - totalW) / 2;
     folderWraps.forEach((wrap, i) => {
-      wrap.style.left = `${positions[i].left}px`;
-      wrap.style.top = `${positions[i].top}px`;
+      wrap.style.left = `${startX + i * (ww + gap)}px`;
+      wrap.style.top = `${ch - wh - gap}px`;
     });
   }
 
@@ -446,8 +603,198 @@
     });
   }
 
-  // ── Carousel window ──
+  // ── Tech icons data ──
+  const techInfo = {
+    psql:      { ext: '.sql', src: '/technologies/psql.png' },
+    react:     { ext: '.jsx', src: '/technologies/react.png' },
+    snntorch:  { ext: '.py',  src: '/technologies/snntorch.png' },
+    strawberry:{ ext: '.py',  src: '/technologies/strawberry.png' },
+    aes256:    { ext: '.rs', src: '/technologies/aes256.png' },
+    docker:    { ext: '.yaml', src: '/technologies/docker.png' },
+    k8s:       { ext: '.yaml', src: '/technologies/k8s.png' },
+    python:    { ext: '.py', src: '/technologies/python.png' },
+    redis:     { ext: '.py', src: '/technologies/redis.png' },
+    rust:      { ext: '.rs', src: '/technologies/rust.png' },
+    sqla:      { ext: '.py',  src: '/technologies/sqla.png' },
+    godot:     { ext: '.gd', src: '/technologies/godot.png' },
+    csharp:    { ext: '.c#', src: '/technologies/csharp.png' },
+    blender:   { ext: '.blend', src: '/technologies/blender.png' },
+    polkadot:  { ext: '.rs', src: '/technologies/polkadot.png' },
+    go:        { ext: '.go', src: '/technologies/go.png' },
+    flutter:   { ext: '.dart', src: '/technologies/flutter.png' },
+    bash: {ext: '.sh', src: '/technologies/bash.png'},
+  };
+
+  const projectTechs = {
+    'project-neuromorphic-cypher': ['psql', 'react', 'snntorch', 'strawberry', 'aes256'],
+    'project-lidercom': ['docker', 'k8s', 'react', 'python', 'strawberry', 'redis', 'rust', 'sqla', 'psql'],
+    'project-go-bubble': ['godot', 'csharp', 'blender'],
+    'project-caja-incasur': ['python', 'psql'],
+    'project-resource-monitor': ['python', 'psql', 'bash'],
+    'project-blockchain-jam': ['polkadot', 'go'],
+    'project-the-mistis-heart': ['godot', 'csharp', 'blender'],
+  };
+
+  const projectReadmes = {
+    'project-neuromorphic-cypher': `# Neuromorphic Computing Cryptography\n\nProject implementing neuromorphic computing principles combined with cryptographic algorithms using SNNTorch and AES-256 encryption. A full-stack solution with React frontend and PostgreSQL backend.`,
+    'project-lidercom': `# Leadership Data Recolector\n\nEnterprise platform for collecting and analyzing leadership data. Built with Docker and Kubernetes orchestration, React frontend, Python/Strawberry GraphQL backend, Redis caching, Rust high-performance modules, and PostgreSQL via SQLAlchemy.`,
+    'project-go-bubble': `# Go Bubble\n\nA 2D game developed for Global Game Jam 2025 using Godot Engine with C# scripting. 3D assets created in Blender.`,
+    'project-caja-incasur': `# Financial Activity Register\n\nInternal financial registration system built with Python and PostgreSQL.`,
+    'project-resource-monitor': `# Resource Monitor for Data Bases\n\nDatabase resource monitoring tool built for ERP of Universidad Católica de Santa María. Python and PostgreSQL based.`,
+    'project-blockchain-jam': `# Blockchain LAN Node\n\nA blockchain node implementation for local area networks. Built with Go and Substrate/Polkadot SDK.`,
+    'project-the-mistis-heart': `# The Misti's Heart\n\nA game inspired by the Misti volcano, developed for Volcan Game Jam 2025. Built with Godot Engine, C#, and Blender.`,
+  };
+
+  const projectLinks = {
+    'project-neuromorphic-cypher': { github: 'https://github.com/ArelyX1/neuromorphic-computing-cryptography', webs: [] },
+    'project-lidercom': { github: 'https://github.com/ArelyX1/Lidercom-kr-Peru-Platform-ML-Backend', webs: ['https://admin.neravy.us/', 'https://lidercom.neravy.us/'] },
+    'project-go-bubble': { github: 'https://github.com/ArelyX1/Go-Bubble', webs: ['https://globalgamejam.org/games/2025/gobubble-4'] },
+    'project-caja-incasur': { github: 'https://github.com/ArelyX1/Automatic-Close-DB-Sessions', webs: [] },
+    'project-resource-monitor': { github: null, webs: [] },
+    'project-blockchain-jam': { github: 'https://github.com/ArelyX1/strawberry-jam', webs: [] },
+    'project-the-mistis-heart': { github: 'https://github.com/ArelyX1/The-Misti-s-Heart', webs: ['https://arelyxl.itch.io/yaravi-corazon-misti'] },
+  };
+
+  let currentTechIcons = [];
+
+  function renderTechIcons(projectName) {
+    techGrid.innerHTML = '';
+    currentTechIcons = [];
+    const techs = projectTechs[projectName] || [];
+    techs.forEach(name => {
+      const info = techInfo[name];
+      if (!info) return;
+      const el = document.createElement('div');
+      el.className = 'wv2-tech-icon';
+      const img = document.createElement('img');
+      img.src = info.src;
+      img.alt = name;
+      img.draggable = false;
+      el.appendChild(img);
+      const lbl = document.createElement('span');
+      lbl.textContent = `${name}${info.ext}`;
+      el.appendChild(lbl);
+      techGrid.appendChild(el);
+      currentTechIcons.push(el);
+    });
+  }
+
+  // ── README + GitHub + Web icons (panelRight) ──
   let currentProject = '';
+  let postitEl = null;
+
+  const rightIcons = [];
+
+  function createRightPanelIcons() {
+    const makeIcon = (tag, label, clickFn) => {
+      const el = document.createElement('div');
+      el.className = 'wv2-file-icon';
+      if (tag === 'readme') {
+        const img = document.createElement('img');
+        img.src = '/readme.png';
+        img.alt = 'README';
+        img.draggable = false;
+        el.appendChild(img);
+      } else if (tag === 'github') {
+        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('viewBox', '0 0 16 16');
+        svg.setAttribute('width', '56');
+        svg.setAttribute('height', '56');
+        svg.setAttribute('fill', 'currentColor');
+        svg.innerHTML = '<path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>';
+        el.appendChild(svg);
+      } else if (tag === 'web') {
+        const img = document.createElement('img');
+        img.src = '/web.png';
+        img.alt = 'Website';
+        img.draggable = false;
+        el.appendChild(img);
+      }
+      const lbl = document.createElement('span');
+      lbl.textContent = label;
+      el.appendChild(lbl);
+      el.addEventListener('click', (e) => { e.stopPropagation(); clickFn(); });
+      return el;
+    };
+
+    const readmeIcon = makeIcon('readme', 'README.md', () => openPostit());
+    panelRight.appendChild(readmeIcon);
+    rightIcons.push(readmeIcon);
+
+    const ghIcon = makeIcon('github', 'github.exe', () => {
+      const links = projectLinks[currentProject];
+      if (links?.github) window.open(links.github, '_blank');
+    });
+    ghIcon.style.display = 'none';
+    panelRight.appendChild(ghIcon);
+    rightIcons.push(ghIcon);
+  }
+
+  // ── Post-it README ──
+  function createPostit() {
+    const el = document.createElement('div');
+    el.className = 'wv2-postit';
+
+    const tb = document.createElement('div');
+    tb.className = 'wv2-postit-titlebar';
+    const title = document.createElement('span');
+    title.textContent = 'README.md';
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'wv2-postit-close';
+    closeBtn.textContent = '×';
+    tb.appendChild(title);
+    tb.appendChild(closeBtn);
+
+    const body = document.createElement('div');
+    body.className = 'wv2-postit-body';
+
+    el.appendChild(tb);
+    el.appendChild(body);
+    workBlock?.appendChild(el);
+
+    closeBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      el.classList.remove('open');
+    });
+
+    let drag = false, sX, sY, oX, oY;
+    tb.addEventListener('pointerdown', (e) => {
+      if (e.target.closest('.wv2-postit-close')) return;
+      drag = true;
+      tb.setPointerCapture(e.pointerId);
+      sX = e.clientX; sY = e.clientY;
+      oX = parseInt(el.style.left) || 0;
+      oY = parseInt(el.style.top) || 0;
+    });
+    tb.addEventListener('pointermove', (e) => {
+      if (!drag) return;
+      el.style.left = `${oX + e.clientX - sX}px`;
+      el.style.top = `${oY + e.clientY - sY}px`;
+    });
+    tb.addEventListener('pointerup', () => { drag = false; });
+    tb.addEventListener('pointercancel', () => { drag = false; });
+
+    return el;
+  }
+
+  function openPostit() {
+    if (!postitEl) return;
+    const readme = projectReadmes[currentProject];
+    if (!readme) return;
+    const body = postitEl.querySelector('.wv2-postit-body');
+    if (body) body.textContent = readme;
+
+    const cr = container.getBoundingClientRect();
+    postitEl.style.left = `${cr.width / 2 - 160 + (Math.random() - 0.5) * 80}px`;
+    postitEl.style.top = `${cr.height / 2 - 140 + (Math.random() - 0.5) * 60}px`;
+
+    postitEl.classList.add('open');
+    postitEl.style.animation = 'none';
+    void postitEl.offsetHeight;
+    postitEl.style.animation = 'win-open 0.3s cubic-bezier(.34,1.56,.64,1) forwards';
+  }
+
+  // ── Carousel window ──
   let carouselImages = [];
   let carouselIndex = 0;
 
@@ -476,7 +823,7 @@
   body.appendChild(nextBtn);
   carousel.appendChild(titlebar);
   carousel.appendChild(body);
-  document.body.appendChild(carousel);
+  workBlock?.appendChild(carousel);
 
   function resizeCarouselToImage(src, callback) {
     const tmp = new Image();
@@ -513,17 +860,11 @@
     carouselIndex = 0;
     titleSpan.textContent = title;
 
-    // Random position near center of work-wrapper
-    const wb = workBlock?.getBoundingClientRect();
-    if (wb) {
-      const cx = wb.left + wb.width / 2;
-      const cy = wb.top + wb.height / 2;
-      carousel.style.left = `${cx - 160 + (Math.random() - 0.5) * 120}px`;
-      carousel.style.top = `${cy - 120 + (Math.random() - 0.5) * 80}px`;
-    } else {
-      carousel.style.left = `${120 + (Math.random() - 0.5) * 120}px`;
-      carousel.style.top = `${120 + (Math.random() - 0.5) * 80}px`;
-    }
+    const cr = container.getBoundingClientRect();
+    const cx = cr.width / 2;
+    const cy = cr.height / 2;
+    carousel.style.left = `${cx - 160 + (Math.random() - 0.5) * 120}px`;
+    carousel.style.top = `${cy - 120 + (Math.random() - 0.5) * 80}px`;
 
     resizeCarouselToImage(images[0], () => {
       carouselImg.src = images[0];
@@ -565,7 +906,6 @@
     goToImage(carouselIndex);
   });
 
-  // Drag carousel by titlebar only
   let carDrag = false;
   let carStartX, carStartY, carOrigX, carOrigY;
 
@@ -628,22 +968,50 @@
     })();
   }
 
-  // ── Fill & update ──
-  function updateCanvas() {
+  // ── Update panels on project select ──
+  function updatePanels() {
     if (!container?.classList.contains('open')) return;
-    positionCanvas();
-    const rect = container.getBoundingClientRect();
+    const rect = panelLeft.getBoundingClientRect();
     initNodes(rect.width, rect.height);
     positionFolders(rect.width, rect.height);
     if (animId) cancelAnimationFrame(animId);
     drawNetwork();
+
+    renderTechIcons(currentProject);
+
+    const links = projectLinks[currentProject];
+    if (rightIcons[0]) rightIcons[0].style.display = currentProject ? '' : 'none';
+    if (rightIcons[1]) rightIcons[1].style.display = links?.github ? '' : 'none';
+
+    const existingWebIcons = panelRight.querySelectorAll('.wv2-file-icon-web');
+    existingWebIcons.forEach(el => el.remove());
+
+    if (links?.webs) {
+      links.webs.forEach(url => {
+        const webIcon = document.createElement('div');
+        webIcon.className = 'wv2-file-icon wv2-file-icon-web';
+        const img = document.createElement('img');
+        img.src = '/web.png';
+        img.alt = 'Website';
+        img.draggable = false;
+        webIcon.appendChild(img);
+        const lbl = document.createElement('span');
+        lbl.textContent = 'web.exe';
+        webIcon.appendChild(lbl);
+        webIcon.addEventListener('click', (e) => {
+          e.stopPropagation();
+          window.open(url, '_blank');
+        });
+        panelRight.appendChild(webIcon);
+      });
+    }
   }
 
   container?.addEventListener('click', (e) => e.stopPropagation());
 
   container?.addEventListener('transitionend', (e) => {
     if (e.propertyName === 'opacity' && container.classList.contains('open')) {
-      updateCanvas();
+      updatePanels();
     }
   });
 
@@ -655,11 +1023,11 @@
         row.classList.add('selected');
         currentProject = row.dataset.project || '';
         const hasBack = row.dataset.hasback === 'true';
-        if (folderWraps[2]) folderWraps[2].style.display = hasBack ? '' : 'none';
+        if (folderWraps[1]) folderWraps[1].style.display = hasBack ? '' : 'none';
         if (container) {
-          positionCanvas();
+          positionContainer();
           container.classList.add('open');
-          requestAnimationFrame(updateCanvas);
+          requestAnimationFrame(updatePanels);
           showFolders();
         }
       } else {
@@ -668,14 +1036,20 @@
           container.classList.remove('open');
           stopAnimation();
           hideFolders();
+          if (postitEl) postitEl.classList.remove('open');
         }
       }
     });
   });
 
   window.addEventListener('resize', () => {
-    if (container?.classList.contains('open')) updateCanvas();
+    if (container?.classList.contains('open')) {
+      positionContainer();
+      updatePanels();
+    }
   });
 
   createFolderComponents();
+  createRightPanelIcons();
+  postitEl = createPostit();
 </script>
