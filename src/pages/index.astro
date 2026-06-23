@@ -71,6 +71,7 @@ import ContactSection from '../components/ContactSection.astro';
   import { animate } from 'motion';
   import('../home/infrastructure/ui/scripts/boot.js');
   import { MODELS } from '../home/application/model-viewer/config.js';
+  import { initCertMurals } from '../certifications/infrastructure/ui/scripts/certMural.js';
 
   function animateTextById(id, text, duration = 0.7, charDelay = 0.09) {
     const el = document.getElementById(id);
@@ -242,6 +243,8 @@ import ContactSection from '../components/ContactSection.astro';
         });
         document.body.style.overflow = 'auto';
         document.documentElement.style.overflow = 'auto';
+        document.body.style.height = '';
+        document.documentElement.style.height = '';
         const headContainer = document.getElementById('sitehead-container');
         headContainer.style.display = 'block';
         const workEl = document.getElementById('work-wrapper');
@@ -249,7 +252,7 @@ import ContactSection from '../components/ContactSection.astro';
         const certsEl = document.getElementById('certifications-wrapper');
         if (certsEl) {
           certsEl.style.display = 'block';
-          document.dispatchEvent(new CustomEvent('certs-visible'));
+          initCertMurals();
         }
         const contactEl = document.getElementById('contact-wrapper');
         if (contactEl) contactEl.style.display = 'block';
