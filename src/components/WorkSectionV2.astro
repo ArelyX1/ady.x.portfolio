@@ -88,54 +88,64 @@
     width: 100%;
     height: 100%;
   }
-  :global(.wv2-folder) {
+  :global(.wv2-folder-wrap) {
     position: absolute;
     z-index: 11;
-    width: 48px;
-    height: 48px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
     cursor: grab;
     pointer-events: none;
     user-select: none;
     touch-action: none;
   }
-  :global(.wv2-container.open .wv2-folder) {
+  :global(.wv2-container.open .wv2-folder-wrap) {
     pointer-events: auto;
+  }
+  :global(.wv2-folder-wrap:active) {
+    cursor: grabbing;
+  }
+  :global(.wv2-folder) {
+    width: 144px;
+    height: 144px;
   }
   :global(.wv2-folder img) {
     width: 100%;
     height: 100%;
     object-fit: contain;
     pointer-events: none;
-  }
-  :global(.wv2-folder:active) {
-    cursor: grabbing;
+    -webkit-user-drag: none;
+    user-select: none;
   }
   :global(.wv2-flabel) {
-    position: absolute;
-    z-index: 11;
     font-family: 'VT323', monospace;
-    font-size: 11px;
+    font-size: 16px;
     color: #fff;
     text-align: center;
-    width: 60px;
+    width: 160px;
     pointer-events: none;
     user-select: none;
     opacity: 0;
     transition: opacity 0.4s ease;
   }
-  :global(.wv2-flabel.open) {
+  :global(.wv2-folder-wrap.open .wv2-flabel) {
     opacity: 1;
   }
+  @keyframes win-open {
+    0% { scale: 0; opacity: 0; }
+    100% { scale: 1; opacity: 1; }
+  }
+
   :global(.wv2-carousel) {
     position: fixed;
     z-index: 100;
-    border: 2px solid #fff;
-    background: transparent;
-    min-width: 300px;
-    min-height: 200px;
-    box-shadow: 4px 4px 0 rgba(0,0,0,0.3);
+    background: #c0c0c0;
+    box-shadow: 8px 8px 0 rgba(0,0,0,0.3);
     display: none;
     font-family: 'VT323', monospace;
+    width: auto;
+    border: 3px solid #000;
   }
   :global(.wv2-carousel.open) {
     display: block;
@@ -144,21 +154,21 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 4px 8px;
+    padding: 8px 14px;
     cursor: move;
-    border-bottom: 2px solid #fff;
-    color: #fff;
-    font-size: 13px;
+    border-bottom: 3px solid #000;
+    color: #000;
+    font-size: 18px;
     user-select: none;
   }
   :global(.wv2-carousel-close) {
     background: none;
-    border: 1px solid #fff;
-    color: #fff;
+    border: 2px solid #000;
+    color: #000;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 20px;
     line-height: 1;
-    padding: 0 6px;
+    padding: 2px 10px;
     font-family: inherit;
   }
   :global(.wv2-carousel-body) {
@@ -166,24 +176,25 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 8px;
+    overflow: hidden;
   }
   :global(.wv2-carousel-body img) {
-    max-width: 100%;
-    max-height: 60vh;
+    width: 100%;
+    height: 100%;
     object-fit: contain;
     display: block;
+    background: #1a1a1a;
   }
   :global(.wv2-carousel-btn) {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
     background: none;
-    border: 2px solid #fff;
+    border: 3px solid #fff;
     color: #fff;
-    font-size: 20px;
+    font-size: 28px;
     cursor: pointer;
-    padding: 4px 10px;
+    padding: 8px 16px;
     font-family: inherit;
     line-height: 1;
   }
@@ -333,150 +344,105 @@
     }
   }
 
-  // ── Folder image components ──
+  // ── Folder components (wrap = icon + label in one container) ──
   const folderData = [
     { name: 'git', src: '/folderGit.png', label: 'Description' },
     { name: 'img', src: '/folderImg.png', label: 'Frontend' },
     { name: 'back', src: '/folderBack.png', label: 'Backend' },
   ];
 
-  const folderEls = [];
-  const folderLabels = [];
+  const folderWraps = [];
 
   function createFolderComponents() {
     if (!container) return;
-    folderData.forEach((f, i) => {
+    folderData.forEach((f) => {
+      const wrap = document.createElement('div');
+      wrap.className = 'wv2-folder-wrap';
+      wrap.dataset.folder = f.name;
+
       const el = document.createElement('div');
       el.className = 'wv2-folder';
-      el.dataset.folder = f.name;
-
       const img = document.createElement('img');
-      img.src = f.src;
-      img.alt = f.name;
+      img.src = f.src; img.alt = f.name; img.draggable = false;
       el.appendChild(img);
-
-      container.appendChild(el);
-      folderEls.push(el);
+      wrap.appendChild(el);
 
       const lbl = document.createElement('div');
       lbl.className = 'wv2-flabel';
       lbl.textContent = f.label;
-      container.appendChild(lbl);
-      folderLabels.push(lbl);
+      wrap.appendChild(lbl);
 
-      // Hover gesture
-      hover(el, {
-        onHoverStart: () => {
-          animate(el, { scale: 1.15 }, { duration: 0.2, easing: 'ease-out' });
-        },
-        onHoverEnd: () => {
-          animate(el, { scale: 1 }, { duration: 0.2, easing: 'ease-out' });
-        },
+      container.appendChild(wrap);
+      folderWraps.push(wrap);
+
+      // Hover gesture (Motion)
+      hover(wrap, {
+        onHoverStart: () => { animate(wrap, { scale: 1.15 }, { duration: 0.2, easing: 'ease-out' }); },
+        onHoverEnd: () => { animate(wrap, { scale: 1 }, { duration: 0.2, easing: 'ease-out' }); },
       });
 
-      // Press gesture
-      press(el, {
-        onPressStart: () => {
-          animate(el, { scale: 0.9 }, { duration: 0.1, easing: 'ease-out' });
-        },
-        onPressEnd: () => {
-          animate(el, { scale: 1 }, { duration: 0.15, easing: 'ease-out' });
-        },
+      // Press gesture (Motion)
+      press(wrap, {
+        onPressStart: () => { animate(wrap, { scale: 0.9 }, { duration: 0.1, easing: 'ease-out' }); },
+        onPressEnd: () => { animate(wrap, { scale: 1 }, { duration: 0.15, easing: 'ease-out' }); },
       });
 
-      // Drag with pointer events (clamped inside canvas)
-      let dragging = false;
-      let startX, startY, origX, origY;
-      const folderSize = 48;
+      // Drag with pointer events (clamped inside container)
+      let dragging = false, startX, startY, origX, origY;
+      const ww = 144, wh = 144 + 30;
 
-      el.addEventListener('pointerdown', (e) => {
+      wrap.addEventListener('pointerdown', (e) => {
         dragging = true;
-        el.setPointerCapture(e.pointerId);
-        startX = e.clientX;
-        startY = e.clientY;
-        origX = parseFloat(el.style.left) || 0;
-        origY = parseFloat(el.style.top) || 0;
+        wrap.setPointerCapture(e.pointerId);
+        startX = e.clientX; startY = e.clientY;
+        origX = parseFloat(wrap.style.left) || 0;
+        origY = parseFloat(wrap.style.top) || 0;
       });
 
-      el.addEventListener('pointermove', (e) => {
+      wrap.addEventListener('pointermove', (e) => {
         if (!dragging || !container) return;
-        const dx = e.clientX - startX;
-        const dy = e.clientY - startY;
-        const cw = container.clientWidth;
-        const ch = container.clientHeight;
-        let newLeft = origX + dx;
-        let newTop = origY + dy;
-        newLeft = Math.max(0, Math.min(cw - folderSize, newLeft));
-        newTop = Math.max(0, Math.min(ch - folderSize, newTop));
-        el.style.left = `${newLeft}px`;
-        el.style.top = `${newTop}px`;
+        const cr = container.getBoundingClientRect();
+        const nl = Math.max(0, Math.min(cr.width - ww, origX + e.clientX - startX));
+        const nt = Math.max(0, Math.min(cr.height - wh, origY + e.clientY - startY));
+        wrap.style.left = `${nl}px`;
+        wrap.style.top = `${nt}px`;
       });
 
-      el.addEventListener('pointerup', () => {
-        dragging = false;
-      });
+      wrap.addEventListener('pointerup', () => { dragging = false; });
+      wrap.addEventListener('pointercancel', () => { dragging = false; });
 
-      el.addEventListener('pointercancel', () => {
-        dragging = false;
+      // Click handler
+      wrap.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (!currentProject) return;
+        if (f.name === 'img') loadProjectImages(currentProject).then(imgs => { if (imgs.length) showCarousel(imgs, `/${currentProject}`); });
+        if (f.name === 'back') loadProjectImages(`${currentProject}/back`).then(imgs => { if (imgs.length) showCarousel(imgs, `/${currentProject}/back`); });
       });
     });
-
-    // Click handlers
-    if (f.name === 'img') {
-      el.addEventListener('click', async (e) => {
-        e.stopPropagation();
-        if (!currentProject) return;
-        const imgs = await loadProjectImages(currentProject);
-        if (imgs.length > 0) showCarousel(imgs, `/${currentProject}`);
-      });
-    }
-    if (f.name === 'back') {
-      el.addEventListener('click', async (e) => {
-        e.stopPropagation();
-        if (!currentProject) return;
-        const imgs = await loadProjectImages(`${currentProject}/back`);
-        if (imgs.length > 0) showCarousel(imgs, `/${currentProject}/back`);
-      });
-    }
   }
 
   function positionFolders(cw, ch) {
-    const folderSize = 48;
-    const gap = 8;
-    const labelGap = 2;
+    const ww = 144, gap = 16, wh = 144 + 30;
     const positions = [
-      { left: gap, top: ch - folderSize - gap },
-      { left: cw / 2 - folderSize / 2, top: ch - folderSize - gap },
-      { left: cw - folderSize - gap, top: ch - folderSize - gap },
+      { left: gap, top: ch - wh - gap },
+      { left: cw / 2 - ww / 2, top: ch - wh - gap },
+      { left: cw - ww - gap, top: ch - wh - gap },
     ];
-    folderEls.forEach((el, i) => {
-      const pos = positions[i];
-      el.style.left = `${pos.left}px`;
-      el.style.top = `${pos.top}px`;
-      // Position label below the folder icon
-      const lbl = folderLabels[i];
-      if (lbl) {
-        lbl.style.left = `${pos.left - 6}px`;
-        lbl.style.top = `${pos.top + folderSize + labelGap}px`;
-      }
+    folderWraps.forEach((wrap, i) => {
+      wrap.style.left = `${positions[i].left}px`;
+      wrap.style.top = `${positions[i].top}px`;
     });
   }
 
   function showFolders() {
-    folderEls.forEach(el => el.classList.add('open'));
-    folderLabels.forEach(el => el.classList.add('open'));
+    folderWraps.forEach(wrap => wrap.classList.add('open'));
   }
 
   function hideFolders() {
-    folderEls.forEach(el => {
-      el.classList.remove('open');
-      el.style.left = '';
-      el.style.top = '';
-    });
-    folderLabels.forEach(el => {
-      el.classList.remove('open');
-      el.style.left = '';
-      el.style.top = '';
+    folderWraps.forEach(wrap => {
+      wrap.classList.remove('open');
+      wrap.style.left = '';
+      wrap.style.top = '';
     });
   }
 
@@ -512,34 +478,91 @@
   carousel.appendChild(body);
   document.body.appendChild(carousel);
 
+  function resizeCarouselToImage(src, callback) {
+    const tmp = new Image();
+    tmp.onload = () => {
+      const maxW = Math.min(1100, window.innerWidth * 0.9);
+      const maxH = Math.min(750, window.innerHeight * 0.75);
+      const natW = tmp.naturalWidth;
+      const natH = tmp.naturalHeight;
+      const imgRatio = natW / natH;
+      const maxRatio = maxW / maxH;
+      let dispW, dispH;
+      if (imgRatio > maxRatio) {
+        dispW = maxW;
+        dispH = Math.round(maxW / imgRatio);
+      } else {
+        dispH = maxH;
+        dispW = Math.round(maxH * imgRatio);
+      }
+      body.style.width = `${Math.max(280, dispW)}px`;
+      body.style.height = `${Math.max(180, dispH)}px`;
+      if (callback) callback();
+    };
+    tmp.onerror = () => {
+      body.style.width = '800px';
+      body.style.height = '560px';
+      if (callback) callback();
+    };
+    tmp.src = src;
+  }
+
   function showCarousel(images, title) {
     if (images.length === 0) return;
     carouselImages = images;
     carouselIndex = 0;
     titleSpan.textContent = title;
-    carouselImg.src = images[0];
-    carousel.style.left = '120px';
-    carousel.style.top = '120px';
-    carousel.classList.add('open');
+
+    // Random position near center of work-wrapper
+    const wb = workBlock?.getBoundingClientRect();
+    if (wb) {
+      const cx = wb.left + wb.width / 2;
+      const cy = wb.top + wb.height / 2;
+      carousel.style.left = `${cx - 160 + (Math.random() - 0.5) * 120}px`;
+      carousel.style.top = `${cy - 120 + (Math.random() - 0.5) * 80}px`;
+    } else {
+      carousel.style.left = `${120 + (Math.random() - 0.5) * 120}px`;
+      carousel.style.top = `${120 + (Math.random() - 0.5) * 80}px`;
+    }
+
+    resizeCarouselToImage(images[0], () => {
+      carouselImg.src = images[0];
+      carousel.classList.add('open');
+      carousel.style.animation = 'none';
+      void carousel.offsetHeight;
+      carousel.style.animation = 'win-open 0.3s cubic-bezier(.34,1.56,.64,1) forwards';
+    });
   }
 
   function closeCarousel() {
     carousel.classList.remove('open');
+    carousel.style.animation = '';
     carouselImages = [];
   }
 
-  closeBtn.addEventListener('click', closeCarousel);
+  closeBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    closeCarousel();
+  });
+
+  function goToImage(index) {
+    if (carouselImages.length === 0) return;
+    const src = carouselImages[index];
+    resizeCarouselToImage(src, () => {
+      carouselImg.src = src;
+    });
+  }
 
   prevBtn.addEventListener('click', () => {
     if (carouselImages.length === 0) return;
     carouselIndex = (carouselIndex - 1 + carouselImages.length) % carouselImages.length;
-    carouselImg.src = carouselImages[carouselIndex];
+    goToImage(carouselIndex);
   });
 
   nextBtn.addEventListener('click', () => {
     if (carouselImages.length === 0) return;
     carouselIndex = (carouselIndex + 1) % carouselImages.length;
-    carouselImg.src = carouselImages[carouselIndex];
+    goToImage(carouselIndex);
   });
 
   // Drag carousel by titlebar only
@@ -547,6 +570,7 @@
   let carStartX, carStartY, carOrigX, carOrigY;
 
   titlebar.addEventListener('pointerdown', (e) => {
+    if (e.target.closest('.wv2-carousel-close')) return;
     carDrag = true;
     titlebar.setPointerCapture(e.pointerId);
     carStartX = e.clientX;
@@ -566,24 +590,42 @@
 
   // ── Image loading helper ──
   function loadProjectImages(folder) {
-    const exts = ['png', 'jpeg', 'jpg'];
     const prefixes = ['img', 'capt'];
-    const candidates = [];
-    for (const prefix of prefixes) {
-      for (let i = 1; i <= 20; i++) {
-        for (const ext of exts) {
-          candidates.push(`/${folder}/${prefix}${i}.${ext}`);
-        }
-      }
-    }
-    return Promise.all(candidates.map((path) => {
-      return new Promise((res) => {
+
+    function probe(path) {
+      return new Promise((resolve) => {
         const img = new Image();
-        img.onload = () => res(path);
-        img.onerror = () => res(null);
+        img.onload = () => resolve(true);
+        img.onerror = () => resolve(false);
         img.src = path;
       });
-    })).then((results) => results.filter(Boolean));
+    }
+
+    async function detectExt(prefix) {
+      for (const ext of ['png', 'jpeg', 'jpg']) {
+        if (await probe(`/${folder}/${prefix}1.${ext}`)) return ext;
+      }
+      return null;
+    }
+
+    return (async () => {
+      const found = [];
+      for (const prefix of prefixes) {
+        const ext = await detectExt(prefix);
+        if (!ext) continue;
+        let misses = 0;
+        for (let i = 1; i <= 30 && misses < 2; i++) {
+          const path = `/${folder}/${prefix}${i}.${ext}`;
+          if (await probe(path)) {
+            found.push(path);
+            misses = 0;
+          } else {
+            misses++;
+          }
+        }
+      }
+      return found;
+    })();
   }
 
   // ── Fill & update ──
@@ -613,8 +655,7 @@
         row.classList.add('selected');
         currentProject = row.dataset.project || '';
         const hasBack = row.dataset.hasback === 'true';
-        if (folderEls[2]) folderEls[2].style.display = hasBack ? '' : 'none';
-        if (folderLabels[2]) folderLabels[2].style.display = hasBack ? '' : 'none';
+        if (folderWraps[2]) folderWraps[2].style.display = hasBack ? '' : 'none';
         if (container) {
           positionCanvas();
           container.classList.add('open');

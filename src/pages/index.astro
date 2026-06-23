@@ -4,6 +4,7 @@ import '../styles/variables-css/_colors.scss';
 import SiteHead from '../components/SiteHead.astro';
 import WorkSection from '../components/WorkSection.astro';
 import WorkSectionV2 from '../components/WorkSectionV2.astro';
+import CertificationsSection from '../components/CertificationsSection.astro';
 import ContactSection from '../components/ContactSection.astro';
 ---
 
@@ -49,6 +50,10 @@ import ContactSection from '../components/ContactSection.astro';
     <div id="work-wrapper" style="display:none;">
       <WorkSection />
       <WorkSectionV2 />
+    </div>
+
+    <div id="certifications-wrapper" style="display:none;">
+      <CertificationsSection />
     </div>
 
     <div id="contact-wrapper" style="display:none;">
@@ -241,6 +246,11 @@ import ContactSection from '../components/ContactSection.astro';
         headContainer.style.display = 'block';
         const workEl = document.getElementById('work-wrapper');
         if (workEl) workEl.style.display = 'block';
+        const certsEl = document.getElementById('certifications-wrapper');
+        if (certsEl) {
+          certsEl.style.display = 'block';
+          document.dispatchEvent(new CustomEvent('certs-visible'));
+        }
         const contactEl = document.getElementById('contact-wrapper');
         if (contactEl) contactEl.style.display = 'block';
         // grid init

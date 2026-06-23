@@ -1,0 +1,86 @@
+.projects-mural {
+  position: relative;
+  height: 300vh;
+}
+
+.projects-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+  background: transparent;
+}
+
+.mural-scroll {
+  height: 100%;
+  will-change: transform;
+}
+
+.mural-wall {
+  position: relative;
+}
+
+.mural-title {
+  position: absolute;
+  font-family: 'Ubuntu', monospace;
+  font-size: clamp(2.5rem, 5vw, 5rem);
+  color: #8a0606;
+  letter-spacing: 0.05em;
+  z-index: 50;
+  text-shadow: 0 0 20px rgba(138, 6, 6, 0.3), 0 0 60px rgba(138, 6, 6, 0.1);
+  pointer-events: none;
+  margin: 0;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .projects-mural {
+    height: auto;
+  }
+
+  .projects-sticky {
+    position: relative;
+    height: auto;
+    overflow: visible;
+  }
+
+  .mural-wall {
+    width: 100% !important;
+    height: auto !important;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    padding: 0 12px 100px;
+  }
+
+  .mural-scroll {
+    transform: none !important;
+    height: auto !important;
+  }
+
+  .mural-title {
+    position: relative;
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
+    white-space: normal;
+    text-align: center;
+    padding: 2rem 1rem 1rem;
+    font-size: clamp(1.5rem, 3vw, 2.5rem);
+  }
+
+  .project-card {
+    position: relative !important;
+    width: 100% !important;
+    height: auto !important;
+    left: auto !important;
+    top: auto !important;
+    transform: none !important;
+    rotate: none !important;
+    z-index: auto !important;
+  }
+
+  .project-card:hover {
+    scale: 1.02;
+  }
+}

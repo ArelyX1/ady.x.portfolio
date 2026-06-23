@@ -1,24 +1,188 @@
 ---
+import CertCard from '../certifications/infrastructure/ui/components/CertCard.astro';
+import { getCertificationsByCategory } from '../certifications/application/certifications';
+
+const techCerts = getCertificationsByCategory('technical');
+const leadCerts = getCertificationsByCategory('leadership');
 ---
 
 <html lang="es">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
-  </head>
-  <body style="margin:0; background:#fff; overflow:hidden; font-family:monospace;">
-    <div id="model-container" style="position:fixed; inset:0;"></div>
-  </body>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <title>Certifications Test</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&family=VT323&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { overflow-x: hidden; }
+    body { background: #fff; font-family: 'Ubuntu', monospace; }
+    .mural { height: 300vh; position: relative; }
+    .sticky { position: sticky; top: 0; height: 100vh; overflow: hidden; }
+    .track { height: 100%; }
+    .wall { position: relative; height: 100vh; }
+    .mtitle {
+      position: absolute;
+      font-size: clamp(2.5rem, 5vw, 5rem);
+      color: #8a0606;
+      z-index: 50;
+      pointer-events: none;
+      white-space: nowrap;
+      text-shadow: 0 0 20px rgba(138,6,6,0.3);
+    }
+  </style>
+</head>
+<body>
+  <section class="mural" id="section-tech">
+    <div class="sticky">
+      <div class="track" id="track-tech">
+        <div class="wall" id="wall-tech">
+          <h2 class="mtitle" id="title-tech">TECHNICAL</h2>
+          {techCerts.map(cert => <CertCard certification={cert} />)}
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="mural" id="section-lead">
+    <div class="sticky">
+      <div class="track" id="track-lead">
+        <div class="wall" id="wall-lead">
+          <h2 class="mtitle" id="title-lead">LEADERSHIP</h2>
+          {leadCerts.map(cert => <CertCard certification={cert} />)}
+        </div>
+      </div>
+    </div>
+  </section>
+</body>
 </html>
 
 <script>
-  import('../home/infrastructure/ui/viewer/ModelViewer.js').then(({ initModelViewer }) => {
-    initModelViewer(document.getElementById('model-container'), {
-      path: '/skull_laugh.glb',
-      scale: 7,
-      y: 2.2,
-      z: 2,
-      rotX: 1.608,
+  import { scroll } from 'motion';
+
+  function initMural(sectionId, trackId, titleId) {
+    const section = document.getElementById(sectionId);
+    const track = document.getElementById(trackId);
+    const wall = track.querySelector('.wall');
+    const title = document.getElementById(titleId);
+    const cards = [...wall.querySelectorAll('.project-card')];
+
+    let muralWidth = 0;
+    let maxX = 0;
+
+    function measureTitle() {
+      const oL = title.style.left;
+      const oT = title.style.top;
+      const oV = title.style.visibility;
+      title.style.left = '0px';
+      title.style.top = '0px';
+      title.style.visibility = 'hidden';
+      const w = title.offsetWidth;
+      title.style.left = oL;
+      title.style.top = oT;
+      title.style.visibility = oV;
+      return w;
+    }
+
+    function layout() {
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const PAD = 80;
+
+      const titleW = measureTitle();
+      const titleX = Math.max(PAD, (vw - titleW) / 2);
+      const titleY = (vh / 2) - 60;
+      title.style.position = 'absolute';
+      title.style.left = titleX + 'px';
+      title.style.top = titleY + 'px';
+
+      const titleRight = titleX + titleW + 120;
+      const yPad = 60;
+      let maxRight = 0;
+
+      const layouts = [
+        { w: 260, h: 340, x: titleRight + 160, y: yPad + 400, rot: 0, z: 11 },
+        { w: 240, h: 295, x: titleRight + 240, y: yPad + 15, rot: 0, z: 11 },
+        { w: 600, h: 700, x: titleRight + 470, y: (vh - 650) / 2, rot: 0, z: 9 },
+        { w: 250, h: 360, x: titleRight + 1080, y: (vh - 630) / 2, rot: 0, z: 9 },
+        { w: 190, h: 290, x: titleRight + 1130, y: (vh + 200) / 2, rot: 0, z: 9 },
+        { w: 360, h: 280, x: titleRight + 1320, y: (vh - 50) / 2, rot: 0, z: 9 },
+        { w: 300, h: 300, x: titleRight + 1500, y: (vh - 640) / 2, rot: 0, z: 9 },
+        { w: 450, h: 650, x: titleRight + 1800, y: (vh - 600) / 2, rot: 0, z: 9 },
+        { w: 250, h: 250, x: titleRight + 2300, y: (vh + 200) / 2, rot: 0, z: 9 },
+        { w: 350, h: 250, x: titleRight + 2280, y: (vh - 535) / 2, rot: 0, z: 9 },
+      ];
+
+      cards.forEach((card, i) => {
+        const l = i < layouts.length ? layouts[i] : {
+          ...layouts[layouts.length - 1],
+          x: layouts[layouts.length - 1].x + (i - layouts.length + 1) * 320,
+          y: layouts[layouts.length - 1].y + ((i - layouts.length + 1) % 2 === 0 ? 0 : 120),
+        };
+        maxRight = Math.max(maxRight, l.x + l.w);
+        card.style.position = 'absolute';
+        card.style.display = 'flex';
+        card.style.left = l.x + 'px';
+        card.style.top = l.y + 'px';
+        card.style.width = l.w + 'px';
+        card.style.height = l.h + 'px';
+        card.style.zIndex = l.z;
+        card.style.rotate = l.rot + 'deg';
+      });
+
+      muralWidth = Math.max(maxRight + PAD, vw + 100);
+      wall.style.width = muralWidth + 'px';
+      wall.style.height = '100vh';
+      maxX = Math.max(0, muralWidth - vw);
+
+      cards.forEach(card => {
+        const cardX = parseFloat(card.style.left);
+        const cardW = parseFloat(card.style.width);
+        const rawStart = maxX > 0 ? (cardX - vw + cardW * 0.3) / maxX : 0;
+        const start = Math.max(0, Math.min(rawStart, 0.5));
+        const end = Math.min(1, start + 0.5);
+        card.dataset.animStart = start;
+        card.dataset.animEnd = end;
+      });
+    }
+
+    function update() {
+      const vh = window.innerHeight;
+      const rect = section.getBoundingClientRect();
+      const sh = section.offsetHeight;
+      const total = sh - vh;
+      if (total <= 0) return;
+      const scrolled = Math.max(0, Math.min(total, -rect.top));
+      const progress = scrolled / total;
+
+      track.style.transform = `translateX(${-progress * maxX}px)`;
+
+      cards.forEach(card => {
+        const s = parseFloat(card.dataset.animStart) || 0;
+        const e = parseFloat(card.dataset.animEnd) || 0.1;
+        const range = e - s;
+        let p;
+        if (range <= 0) {
+          p = progress >= s ? 1 : 0;
+        } else {
+          p = Math.max(0, Math.min(1, (progress - s) / range));
+        }
+        const ease = 1 - Math.pow(1 - p, 4);
+        card.style.transform = `translateX(${550 - 550 * ease}px) rotate(${12 - 12 * ease}deg)`;
+      });
+    }
+
+    layout();
+    update();
+
+    scroll(update, { container: document.documentElement });
+
+    window.addEventListener('resize', () => {
+      layout();
+      update();
     });
-  });
+  }
+
+  initMural('section-tech', 'track-tech', 'title-tech');
+  initMural('section-lead', 'track-lead', 'title-lead');
 </script>

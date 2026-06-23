@@ -1,0 +1,132 @@
+---
+import type { Certification } from '../../../domain/certification';
+
+export interface Props {
+  certification: Certification;
+}
+
+const { certification } = Astro.props;
+---
+
+<div class="project-card cert-card">
+  <div class="card-img">
+    <img src={certification.image} alt={certification.title} loading="lazy" />
+  </div>
+  <div class="card-body">
+    <h3>{certification.title}</h3>
+    <p>{certification.description}</p>
+    <div class="card-tags">
+      {certification.tags.map(tag => <span>{tag}</span>)}
+    </div>
+  </div>
+</div>
+
+<style>
+  .project-card {
+    display: flex;
+    flex-direction: column;
+    background: rgba(31, 31, 31, 0.95);
+    border: 1px solid rgba(138, 6, 6, 0.25);
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow:
+      0 2px 8px rgba(0, 0, 0, 0.4),
+      0 8px 32px rgba(0, 0, 0, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.03);
+    cursor: default;
+    opacity: 0.75;
+    transition: opacity 0.2s;
+    will-change: transform, opacity;
+  }
+
+  .project-card:hover {
+    scale: 1.05;
+    opacity: 1;
+    box-shadow:
+      0 4px 16px rgba(138, 6, 6, 0.2),
+      0 12px 48px rgba(0, 0, 0, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    z-index: 100 !important;
+  }
+
+  .card-img {
+    width: 100%;
+    flex: 1;
+    overflow: hidden;
+    min-height: 0;
+  }
+
+  .card-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .card-body {
+    padding: 14px 16px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .card-body h3 {
+    font-family: 'Ubuntu', sans-serif;
+    font-size: 1rem;
+    color: #fafafa;
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  .card-body p {
+    font-family: 'Ubuntu', sans-serif;
+    font-size: 0.72rem;
+    color: rgba(250, 250, 250, 0.65);
+    line-height: 1.4;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 2px;
+  }
+
+  .card-tags span {
+    font-family: 'VT323', monospace;
+    font-size: 0.6rem;
+    padding: 2px 6px;
+    border: 1px solid rgba(138, 6, 6, 0.3);
+    border-radius: 3px;
+    color: #8a0606;
+    letter-spacing: -0.01em;
+  }
+
+  @media (max-width: 768px) {
+    .card-img {
+      min-height: 120px;
+    }
+
+    .card-body {
+      padding: 8px 10px 10px;
+    }
+
+    .card-body h3 {
+      font-size: 0.85rem;
+    }
+
+    .card-body p {
+      font-size: 0.65rem;
+      -webkit-line-clamp: 2;
+    }
+
+    .card-tags span {
+      font-size: 0.55rem;
+    }
+  }
+</style>
