@@ -18,7 +18,13 @@ export function initModelViewer(container, config) {
   container.appendChild(canvas);
 
   const parent = container;
-  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: false });
+  const renderer = new THREE.WebGLRenderer({
+    canvas,
+    alpha: true,
+    antialias: false,
+    powerPreference: "high-performance",
+    failIfMajorPerformanceCaveat: true,
+  });
   const pr = Math.min(devicePixelRatio, 1.5);
   renderer.setPixelRatio(pr);
   renderer.setClearColor(0x000000, 0);
@@ -94,17 +100,26 @@ export function initModelViewer(container, config) {
     asciiEffect.uniforms.get('uResolution').value.copy(resolution);
   }
   resize();
-  new ResizeObserver(resize).observe(parent);
-
-  (function loop() {
-    requestAnimationFrame(loop);
-    composer.render();
-  })();
+  const resizeObserver = new ResizeObserver(resize);
+  resizeObserver.observe(parent);
+  renderer.setAnimationLoop(() => composer.render());
 
   let vhsPass = null;
 
   return {
-    dispose() { renderer.dispose(); composer.dispose(); },
+    dispose() {
+      renderer.setAnimationLoop(null);
+      resizeObserver.disconnect();
+      renderer.dispose();
+      composer.dispose();
+      group.traverse(o => {
+        if (o.isMesh) {
+          o.geometry.dispose();
+          if (Array.isArray(o.material)) o.material.forEach(m => m.dispose());
+          else o.material.dispose();
+        }
+      });
+    },
     startVHS() {
       const vhs = new VHSDistortionEffect();
       vhsPass = new EffectPass(camera, vhs);

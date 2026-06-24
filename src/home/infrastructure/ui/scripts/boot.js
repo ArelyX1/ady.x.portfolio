@@ -1,5 +1,18 @@
 import { kernels, systemdServices } from '../../../application/boot';
 
+const adblockDetected = (() => {
+  const bait = document.createElement('div');
+  bait.className = 'adsbox pub_300x250';
+  bait.id = 'ad-container--bait';
+  bait.innerHTML = '&nbsp;';
+  bait.style.position = 'absolute';
+  bait.style.left = '-9999px';
+  document.body.appendChild(bait);
+  const blocked = bait.offsetHeight === 0 || bait.offsetParent === null;
+  bait.remove();
+  return blocked;
+})();
+
 const bootScreen = document.getElementById('boot-screen');
 const bootOutput = document.getElementById('boot-output');
 if (bootScreen && bootOutput) {
@@ -66,6 +79,7 @@ if (bootScreen && bootOutput) {
           '> inicializando AR3LYX1 portfolio...',
           '> sistema listo. bienvenido.',
         ];
+        if (adblockDetected) msgs.splice(1, 0, '> WARNING: Ad blocker detected — some content may not display correctly. Please disable it for this site.');
 
         function typeInit(lineIdx, charIdx, cursorEl) {
           if (charIdx < msgs[lineIdx].length) {

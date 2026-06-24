@@ -853,24 +853,24 @@
 
   // ── Tech icons data ──
   const techInfo = {
-    psql:      { ext: '.sql', src: '/technologies/psql.png' },
-    react:     { ext: '.jsx', src: '/technologies/react.png' },
-    snntorch:  { ext: '.py',  src: '/technologies/snntorch.png' },
-    strawberry:{ ext: '.py',  src: '/technologies/strawberry.png' },
-    aes256:    { ext: '.rs', src: '/technologies/aes256.png' },
-    docker:    { ext: '.yaml', src: '/technologies/docker.png' },
-    k8s:       { ext: '.yaml', src: '/technologies/k8s.png' },
-    python:    { ext: '.py', src: '/technologies/python.png' },
-    redis:     { ext: '.py', src: '/technologies/redis.png' },
-    rust:      { ext: '.rs', src: '/technologies/rust.png' },
-    sqla:      { ext: '.py',  src: '/technologies/sqla.png' },
-    godot:     { ext: '.gd', src: '/technologies/godot.png' },
-    csharp:    { ext: '.c#', src: '/technologies/csharp.png' },
-    blender:   { ext: '.blend', src: '/technologies/blender.png' },
-    polkadot:  { ext: '.rs', src: '/technologies/polkadot.png' },
-    go:        { ext: '.go', src: '/technologies/go.png' },
-    flutter:   { ext: '.dart', src: '/technologies/flutter.png' },
-    bash: {ext: '.sh', src: '/technologies/bash.png'},
+    psql:      { ext: '.sql', src: '/technologies/psql.webp' },
+    react:     { ext: '.jsx', src: '/technologies/react.webp' },
+    snntorch:  { ext: '.py',  src: '/technologies/snntorch.webp' },
+    strawberry:{ ext: '.py',  src: '/technologies/strawberry.webp' },
+    aes256:    { ext: '.rs', src: '/technologies/aes256.webp' },
+    docker:    { ext: '.yaml', src: '/technologies/docker.webp' },
+    k8s:       { ext: '.yaml', src: '/technologies/k8s.webp' },
+    python:    { ext: '.py', src: '/technologies/python.webp' },
+    redis:     { ext: '.py', src: '/technologies/redis.webp' },
+    rust:      { ext: '.rs', src: '/technologies/rust.webp' },
+    sqla:      { ext: '.py',  src: '/technologies/sqla.webp' },
+    godot:     { ext: '.gd', src: '/technologies/godot.webp' },
+    csharp:    { ext: '.c#', src: '/technologies/csharp.webp' },
+    blender:   { ext: '.blend', src: '/technologies/blender.webp' },
+    polkadot:  { ext: '.rs', src: '/technologies/polkadot.webp' },
+    go:        { ext: '.go', src: '/technologies/go.webp' },
+    flutter:   { ext: '.dart', src: '/technologies/flutter.webp' },
+    bash: {ext: '.sh', src: '/technologies/bash.webp'},
   };
 
   const projectTechs = {
@@ -918,6 +918,7 @@
       img.src = info.src;
       img.alt = name;
       img.draggable = false;
+      img.loading = 'lazy';
       el.appendChild(img);
       const lbl = document.createElement('span');
       lbl.textContent = `${name}${info.ext}`;
@@ -939,7 +940,7 @@
       el.className = 'wv2-file-icon';
       if (tag === 'readme') {
         const img = document.createElement('img');
-        img.src = '/readme.png';
+        img.src = '/readme.webp';
         img.alt = 'README';
         img.draggable = false;
         el.appendChild(img);
@@ -953,7 +954,7 @@
         el.appendChild(svg);
       } else if (tag === 'web') {
         const img = document.createElement('img');
-        img.src = '/web.png';
+        img.src = '/web.webp';
         img.alt = 'Website';
         img.draggable = false;
         el.appendChild(img);
@@ -1061,6 +1062,7 @@
   const body = document.createElement('div');
   body.className = 'wv2-carousel-body';
   const carouselImg = document.createElement('img');
+  carouselImg.loading = 'lazy';
   const prevBtn = document.createElement('button');
   prevBtn.className = 'wv2-carousel-btn wv2-carousel-prev';
   prevBtn.textContent = '◀';
@@ -1141,11 +1143,22 @@
     closeCarousel();
   });
 
+  function preloadAdjacent(index) {
+    if (carouselImages.length < 2) return;
+    const prevIdx = (index - 1 + carouselImages.length) % carouselImages.length;
+    const nextIdx = (index + 1) % carouselImages.length;
+    [prevIdx, nextIdx].forEach(idx => {
+      const img = new Image();
+      img.src = carouselImages[idx];
+    });
+  }
+
   function goToImage(index) {
     if (carouselImages.length === 0) return;
     const src = carouselImages[index];
     resizeCarouselToImage(src, () => {
       carouselImg.src = src;
+      preloadAdjacent(index);
     });
   }
 
@@ -1183,42 +1196,54 @@
   titlebar.addEventListener('pointerup', () => { carDrag = false; });
   titlebar.addEventListener('pointercancel', () => { carDrag = false; });
 
-  // ── Image loading helper ──
+  // ── Image loading helper (parallel HEAD probing) ──
   function loadProjectImages(folder) {
+    const cache = loadProjectImages._cache || (loadProjectImages._cache = {});
+    if (cache[folder]) return Promise.resolve(cache[folder]);
+
     const prefixes = ['img', 'capt'];
+    const extensions = ['webp', 'png', 'jpeg', 'jpg'];
 
-    function probe(path) {
-      return new Promise((resolve) => {
-        const img = new Image();
-        img.onload = () => resolve(true);
-        img.onerror = () => resolve(false);
-        img.src = path;
-      });
-    }
-
-    async function detectExt(prefix) {
-      for (const ext of ['png', 'jpeg', 'jpg']) {
-        if (await probe(`/${folder}/${prefix}1.${ext}`)) return ext;
+    async function probe(path) {
+      try {
+        const r = await fetch(path, { method: 'HEAD' });
+        return r.ok;
+      } catch {
+        return false;
       }
-      return null;
     }
 
     return (async () => {
+      // Phase 1: detect extensions for all prefixes in parallel
+      const extProbes = prefixes.map(async prefix => {
+        const results = await Promise.all(
+          extensions.map(ext => probe(`/${folder}/${prefix}1.${ext}`))
+        );
+        return { prefix, ext: extensions[results.indexOf(true)] || null };
+      });
+      const detected = await Promise.all(extProbes);
+
+      // Phase 2: probe all files up to 30 in parallel, apply 2-miss tolerance
       const found = [];
-      for (const prefix of prefixes) {
-        const ext = await detectExt(prefix);
-        if (!ext) continue;
+      await Promise.all(detected.map(async ({ prefix, ext }) => {
+        if (!ext) return;
+        const probes = [];
+        for (let i = 1; i <= 30; i++) {
+          probes.push(probe(`/${folder}/${prefix}${i}.${ext}`));
+        }
+        const results = await Promise.all(probes);
         let misses = 0;
-        for (let i = 1; i <= 30 && misses < 2; i++) {
-          const path = `/${folder}/${prefix}${i}.${ext}`;
-          if (await probe(path)) {
-            found.push(path);
+        for (let i = 0; i < results.length && misses < 2; i++) {
+          if (results[i]) {
+            found.push(`/${folder}/${prefix}${i + 1}.${ext}`);
             misses = 0;
           } else {
             misses++;
           }
         }
-      }
+      }));
+
+      cache[folder] = found;
       return found;
     })();
   }
@@ -1257,7 +1282,7 @@
         const webIcon = document.createElement('div');
         webIcon.className = 'wv2-file-icon wv2-file-icon-web';
         const img = document.createElement('img');
-        img.src = '/web.png';
+        img.src = '/web.webp';
         img.alt = 'Website';
         img.draggable = false;
         webIcon.appendChild(img);
