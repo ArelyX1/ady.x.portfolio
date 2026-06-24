@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { EffectComposer, RenderPass, EffectPass } from 'postprocessing';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { createAsciiTexture, CustomASCIIEffect } from './ASCIIEffect.js';
 import { VHSDistortionEffect } from './VHSEffect.js';
 
@@ -35,6 +36,9 @@ export function initModelViewer(container, config) {
   group.scale.setScalar(0.125);
 
     const loader = new GLTFLoader();
+    const dracoLoader = new DRACOLoader();
+    dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.6/');
+    loader.setDRACOLoader(dracoLoader);
   const scenes = [];
 
   configs.forEach((c, i) => {
