@@ -5,7 +5,7 @@ export interface Certification {
   description: string;
   image: string;
   tags: string[];
-  category: 'technical' | 'leadership';
+  category: 'technical' | 'otros';
   issuedAt: string;
   link: string;
   linkText: string;

@@ -3,7 +3,7 @@ import CertCard from '../certifications/infrastructure/ui/components/CertCard.as
 import { getCertificationsByCategory } from '../certifications/application/certifications';
 
 const techCerts = getCertificationsByCategory('technical');
-const leadCerts = getCertificationsByCategory('leadership');
+const otrosCerts = getCertificationsByCategory('otros');
 ---
 
 <div id="certifications">
@@ -17,12 +17,12 @@ const leadCerts = getCertificationsByCategory('leadership');
       </div>
     </div>
   </section>
-  <section class="crt-mural" id="crt-lead">
+  <section class="crt-mural" id="crt-otros">
     <div class="crt-sticky">
-      <div class="crt-track" id="crt-track-lead">
-        <div class="crt-wall" id="crt-wall-lead">
-          <h2 class="crt-title" id="crt-title-lead">LEADERSHIP</h2>
-          {leadCerts.map(cert => <CertCard certification={cert} />)}
+      <div class="crt-track" id="crt-track-otros">
+        <div class="crt-wall" id="crt-wall-otros">
+          <h2 class="crt-title" id="crt-title-otros">PARTICIPATION<br>& OTHERS</h2>
+          {otrosCerts.map(cert => <CertCard certification={cert} />)}
         </div>
       </div>
     </div>

@@ -1,6 +1,6 @@
 const MURALS = [
   ['crt-tech', 'crt-track-tech', 'crt-title-tech'],
-  ['crt-lead', 'crt-track-lead', 'crt-title-lead'],
+  ['crt-otros', 'crt-track-otros', 'crt-title-otros'],
 ];
 
 let booted = false;
