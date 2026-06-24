@@ -1,3 +1,5 @@
+import { scroll } from 'motion';
+
 const MURALS = [
   ['crt-tech', 'crt-track-tech', 'crt-title-tech'],
   ['crt-otros', 'crt-track-otros', 'crt-title-otros'],
@@ -50,31 +52,40 @@ function initMural(sectionId, trackId, titleId) {
     const layouts = [
       { w: 260, h: 340, x: titleRight + 160, y: yPad + 400, rot: 0, z: 11 },
       { w: 240, h: 295, x: titleRight + 240, y: yPad + 15, rot: 0, z: 11 },
-      { w: 600, h: 700, x: titleRight + 470, y: (vh - 650) / 2, rot: 0, z: 9 },
-      { w: 250, h: 360, x: titleRight + 1080, y: (vh - 630) / 2, rot: 0, z: 9 },
-      { w: 190, h: 290, x: titleRight + 1130, y: (vh + 200) / 2, rot: 0, z: 9 },
+      { w: 400, h: 300, x: titleRight + 590, y: (vh - 650) / 2, rot: 0, z: 9 },
+      { w: 250, h: 360, x: titleRight + 1030, y: (vh - 630) / 2, rot: 0, z: 9 },
+      { w: 190, h: 290, x: titleRight + 1130, y: (vh + 20) / 2, rot: 0, z: 9 },
       { w: 360, h: 280, x: titleRight + 1320, y: (vh - 50) / 2, rot: 0, z: 9 },
       { w: 300, h: 300, x: titleRight + 1500, y: (vh - 640) / 2, rot: 0, z: 9 },
       { w: 450, h: 650, x: titleRight + 1800, y: (vh - 600) / 2, rot: 0, z: 9 },
-      { w: 250, h: 250, x: titleRight + 2300, y: (vh + 200) / 2, rot: 0, z: 9 },
+      { w: 250, h: 250, x: titleRight + 2300, y: (vh + 130) / 2, rot: 0, z: 9 },
       { w: 350, h: 250, x: titleRight + 2280, y: (vh - 535) / 2, rot: 0, z: 9 },
     ];
 
+    const overflowSizes = [
+      { w: 280, h: 320, x: titleRight + 2600, y: (vh - 585) / 2, rot: 0, z: 9 },
+      { w: 220, h: 260, x: titleRight + 2600, y: (vh + 10) / 2, rot: 0, z: 9 },
+      { w: 380, h: 280, x: titleRight + 2880, y: (vh - 20) / 2, rot: 0, z: 9 },
+      { w: 200, h: 300, x: titleRight + 3000, y: (vh - 750) / 2, rot: 0, z: 9 },
+      { w: 320, h: 240, x: titleRight + 3280, y: (vh - 53) / 2, rot: 0, z: 9 },
+      { w: 320, h: 240, x: titleRight + 3680, y: (vh - 0) / 2, rot: 0, z: 9 },
+      { w: 320, h: 240, x: titleRight + 3400, y: (vh - 653) / 2, rot: 0, z: 9 },
+    ];
+
     cards.forEach((card, i) => {
-      const l = i < layouts.length ? layouts[i] : {
-        ...layouts[layouts.length - 1],
-        x: layouts[layouts.length - 1].x + (i - layouts.length + 1) * 320,
-        y: layouts[layouts.length - 1].y + ((i - layouts.length + 1) % 2 === 0 ? 0 : 120),
-        rot: 0,
-        z: 9,
-      };
+      let l;
+      if (i < layouts.length) {
+        l = layouts[i];
+      } else {
+        const off = (i - layouts.length) % overflowSizes.length;
+        l = overflowSizes[off];
+      }
       maxRight = Math.max(maxRight, l.x + l.w);
       card.style.position = 'absolute';
       card.style.display = 'flex';
       card.style.left = `${l.x}px`;
       card.style.top = `${l.y}px`;
       card.style.width = `${l.w}px`;
-      card.style.height = `${l.h}px`;
       card.style.zIndex = l.z;
       card.style.rotate = `${l.rot}deg`;
     });
@@ -124,11 +135,6 @@ function initMural(sectionId, trackId, titleId) {
   layout();
   update();
 
-  // Native scroll on every plausible root — boot.css breaks Motion's container binding
-  const onScroll = () => update();
-  window.addEventListener('scroll', onScroll, { passive: true });
-  document.addEventListener('scroll', onScroll, { passive: true, capture: true });
-
   let ticking = false;
   function tick() {
     if (!ticking) return;
@@ -141,6 +147,8 @@ function initMural(sectionId, trackId, titleId) {
     if (ticking) requestAnimationFrame(tick);
   }, { root: null, threshold: 0 });
   io.observe(section);
+
+  scroll(update, { container: document.documentElement });
 
   window.addEventListener('resize', () => {
     layout();

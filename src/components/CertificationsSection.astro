@@ -7,6 +7,7 @@ const otrosCerts = getCertificationsByCategory('otros');
 ---
 
 <div id="certifications">
+  <div class="certs-label">&gt; CERTIFICATES</div>
   <section class="crt-mural" id="crt-tech">
     <div class="crt-sticky">
       <div class="crt-track" id="crt-track-tech">
@@ -32,6 +33,16 @@ const otrosCerts = getCertificationsByCategory('otros');
 <style>
   #certifications {
     width: 100%;
+  }
+  .certs-label {
+    text-align: center;
+    font-size: clamp(1rem, 2.5vw, 1.8rem);
+    font-weight: 700;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: #444;
+    padding: 2rem 0 1rem;
+    font-family: 'VT323', 'Courier New', monospace;
   }
   .crt-mural {
     position: relative;

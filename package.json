@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "bash scripts/generate-thumbnails.sh && astro build",
     "preview": "astro preview",
     "astro": "astro"
   },

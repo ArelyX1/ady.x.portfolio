@@ -32,11 +32,11 @@ export function initMuralScroll(containerId, scrollId = 'mural-scroll', wallId =
       { w: 240, h: 295, x: titleRight + 240, y: yPad + 15, rot: 0, z: 11 },
       { w: 600, h: 700, x: titleRight + 470, y: (vh - 650) / 2, rot: 0, z: 9 },
       { w: 250, h: 360, x: titleRight + 1080, y: (vh - 630) / 2, rot: 0, z: 9 },
-      { w: 190, h: 290, x: titleRight + 1130, y: (vh + 200) / 2, rot: 0, z: 9 },
+      { w: 190, h: 290, x: titleRight + 1130, y: (vh + 10) / 2, rot: 0, z: 9 },
       { w: 360, h: 280, x: titleRight + 1320, y: (vh - 50) / 2, rot: 0, z: 9 },
       { w: 300, h: 300, x: titleRight + 1500, y: (vh - 640) / 2, rot: 0, z: 9 },
       { w: 450, h: 650, x: titleRight + 1800, y: (vh - 600) / 2, rot: 0, z: 9 },
-      { w: 250, h: 250, x: titleRight + 2300, y: (vh + 200) / 2, rot: 0, z: 9 },
+      { w: 250, h: 250, x: titleRight + 2300, y: (vh + 0) / 2, rot: 0, z: 9 },
       { w: 350, h: 250, x: titleRight + 2280, y: (vh - 535) / 2, rot: 0, z: 9 },
     ];
 

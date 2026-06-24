@@ -8,7 +8,7 @@ export interface Props {
 const { certification } = Astro.props;
 ---
 
-<div class="project-card cert-card">
+<div class="project-card cert-card" data-pdf={certification.link}>
   <div class="card-img">
     <img src={certification.image} alt={certification.title} loading="lazy" />
   </div>
@@ -18,8 +18,77 @@ const { certification } = Astro.props;
     <div class="card-tags">
       {certification.tags.map(tag => <span>{tag}</span>)}
     </div>
+    <!-- <span class="card-link">{certification.linkText}</span> -->
   </div>
 </div>
+
+<script>
+  function openModal(pdfUrl: string) {
+    const existing = document.getElementById('cert-modal');
+    if (existing) existing.remove();
+
+    const overlay = document.createElement('div');
+    overlay.id = 'cert-modal';
+    overlay.style.cssText = `
+      position: fixed; inset: 0; z-index: 9999;
+      background: rgba(0,0,0,0.85);
+      display: flex; align-items: center; justify-content: center;
+      padding: 24px;
+      opacity: 0; transition: opacity 0.2s;
+    `;
+
+    const container = document.createElement('div');
+    container.style.cssText = `
+      position: relative; width: 90vw; height: 90vh;
+      background: #1f1f1f; border-radius: 8px; overflow: hidden;
+      border: 1px solid rgba(138,6,6,0.3);
+      transform: scale(0.95); transition: transform 0.2s;
+    `;
+
+    const closeBtn = document.createElement('button');
+    closeBtn.innerHTML = '&times;';
+    closeBtn.style.cssText = `
+      position: absolute; top: 12px; right: 16px; z-index: 10;
+      background: none; border: none; color: #8a0606;
+      font-size: 2rem; cursor: pointer; padding: 4px 10px;
+      font-family: 'Ubuntu', sans-serif; line-height: 1;
+      border-radius: 4px;
+    `;
+    closeBtn.onmouseover = () => { closeBtn.style.background = 'rgba(138,6,6,0.15)'; };
+    closeBtn.onmouseout = () => { closeBtn.style.background = 'none'; };
+    closeBtn.onclick = () => overlay.remove();
+
+    const embed = document.createElement('embed');
+    embed.src = pdfUrl;
+    embed.type = 'application/pdf';
+    embed.style.cssText = 'width:100%; height:100%; border:none; display:block;';
+
+    container.appendChild(closeBtn);
+    container.appendChild(embed);
+    overlay.appendChild(container);
+    document.body.appendChild(overlay);
+
+    requestAnimationFrame(() => {
+      overlay.style.opacity = '1';
+      container.style.transform = 'scale(1)';
+    });
+
+    overlay.onclick = (e) => {
+      if (e.target === overlay) {
+        overlay.style.opacity = '0';
+        container.style.transform = 'scale(0.95)';
+        setTimeout(() => overlay.remove(), 200);
+      }
+    };
+  }
+
+  document.querySelectorAll<HTMLElement>('.cert-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const pdfUrl = card.dataset.pdf;
+      if (pdfUrl) openModal(pdfUrl);
+    });
+  });
+</script>
 
 <style>
   .project-card {
@@ -33,10 +102,12 @@ const { certification } = Astro.props;
       0 2px 8px rgba(0, 0, 0, 0.4),
       0 8px 32px rgba(0, 0, 0, 0.3),
       inset 0 1px 0 rgba(255, 255, 255, 0.03);
-    cursor: default;
+    cursor: pointer;
     opacity: 0.75;
     transition: opacity 0.2s;
     will-change: transform, opacity;
+    text-decoration: none;
+    color: inherit;
   }
 
   .project-card:hover {
@@ -51,15 +122,13 @@ const { certification } = Astro.props;
 
   .card-img {
     width: 100%;
-    flex: 1;
     overflow: hidden;
-    min-height: 0;
+    flex-shrink: 0;
   }
 
   .card-img img {
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+    height: auto;
     display: block;
   }
 
@@ -99,12 +168,27 @@ const { certification } = Astro.props;
 
   .card-tags span {
     font-family: 'VT323', monospace;
-    font-size: 0.6rem;
+    font-size: 0.85rem;
     padding: 2px 6px;
-    border: 1px solid rgba(138, 6, 6, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.568);
     border-radius: 3px;
-    color: #8a0606;
+    color: #b9aeae;
     letter-spacing: -0.01em;
+  }
+
+  .card-link {
+    font-family: 'VT323', monospace;
+    font-size: 0.7rem;
+    color: #b9aeae;
+    margin-top: 4px;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+  }
+
+  .project-card:hover .card-link {
+    opacity: 1;
   }
 
   @media (max-width: 768px) {
@@ -126,7 +210,7 @@ const { certification } = Astro.props;
     }
 
     .card-tags span {
-      font-size: 0.55rem;
+      font-size: 0.8rem;
     }
   }
 </style>

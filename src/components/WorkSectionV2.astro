@@ -11,7 +11,7 @@
     <div class="wv2-item left">Go Bubble</div>
     <div class="wv2-item right">Global Game Jam ⋆ 2025</div>
   </div>
-  <div class="wv2-row" data-project="project-resource-monitor">
+  <div class="wv2-row" data-project="project-resource-monitor" data-hasback="false">
     <div class="wv2-item left">Resource Monitor for Data Bases</div>
     <div class="wv2-item right">ERP of Universidad Católica de Santa María ⋆ 2025</div>
   </div>
@@ -87,27 +87,73 @@
     position: relative;
     overflow: hidden;
     flex-shrink: 0;
+    border: 2px solid #000;
+    box-shadow:
+      inset 1px 1px 0 #dfdfdf,
+      inset -1px -1px 0 #808080;
+    background: #c0c0c0;
+    padding-top: 24px;
+    box-sizing: border-box;
   }
   :global(.wv2-panel.left) {
     flex: 3;
-    border: 2px solid #000;
   }
-  :global(.wv2-panel.center),
-  :global(.wv2-panel.right) {
+  :global(.wv2-panel.center) {
     flex: 4;
-    background: #c0c0c0;
-    border: 2px solid #000;
-    box-shadow:
-      inset 1px 1px 0 #fff,
-      inset -1px -1px 0 #808080;
   }
   :global(.wv2-panel.right) {
     flex: 2.5;
   }
-  :global(.wv2-panel canvas) {
+
+  :global(.wv2-panel canvas),
+  :global(.wv2-bg-canvas) {
     display: block;
     width: 100%;
     height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 0;
+  }
+
+  :global(.wv2-titlebar) {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 24px;
+    background: linear-gradient(90deg, #000080, #1084d0);
+    color: #fff;
+    font-family: 'VT323', monospace;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    z-index: 20;
+    user-select: none;
+    border-bottom: 1px solid #000;
+  }
+
+  :global(.wv2-panel)::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 15;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 1px,
+      rgba(0,0,0,0.15) 1px,
+      rgba(0,0,0,0.15) 2px
+    );
+  }
+
+  :global(.wv2-panel.left > *:not(canvas):not(.wv2-bg-canvas):not(.wv2-titlebar):not(.wv2-folder-wrap)),
+  :global(.wv2-panel.center > *:not(canvas):not(.wv2-bg-canvas):not(.wv2-titlebar)),
+  :global(.wv2-panel.right > *:not(canvas):not(.wv2-bg-canvas):not(.wv2-titlebar)) {
+    position: relative;
+    z-index: 1;
   }
 
   :global(.wv2-folder-wrap) {
@@ -241,6 +287,8 @@
     height: 100%;
     box-sizing: border-box;
     overflow-y: auto;
+    position: relative;
+    z-index: 1;
   }
   :global(.wv2-tech-icon) {
     display: flex;
@@ -280,8 +328,10 @@
     align-items: center;
     justify-content: center;
     gap: 12px;
-    padding: 12px;
+    padding: 32px 12px 12px;
     box-sizing: border-box;
+    position: relative;
+    z-index: 1;
   }
   :global(.wv2-file-icon) {
     display: flex;
@@ -302,7 +352,7 @@
   :global(.wv2-file-icon span) {
     font-family: 'VT323', monospace;
     font-size: 20px;
-    color: #000;
+    color: #fff;
     text-align: center;
     margin-top: 2px;
   }
@@ -377,23 +427,44 @@
   const panelLeft = document.createElement('div');
   panelLeft.className = 'wv2-panel left';
   container.appendChild(panelLeft);
-
   const canvas = document.createElement('canvas');
   panelLeft.appendChild(canvas);
+  const titleLeft = document.createElement('div');
+  titleLeft.className = 'wv2-titlebar';
+  titleLeft.textContent = 'Explorer';
+  panelLeft.appendChild(titleLeft);
 
   // Panel 2: Tech icons
   const panelCenter = document.createElement('div');
   panelCenter.className = 'wv2-panel center';
   container.appendChild(panelCenter);
 
+  const canvasCenter = document.createElement('canvas');
+  canvasCenter.className = 'wv2-bg-canvas';
+  panelCenter.appendChild(canvasCenter);
+
   const techGrid = document.createElement('div');
   techGrid.className = 'wv2-tech-grid';
   panelCenter.appendChild(techGrid);
+
+  const titleCenter = document.createElement('div');
+  titleCenter.className = 'wv2-titlebar';
+  titleCenter.textContent = 'System Info';
+  panelCenter.appendChild(titleCenter);
 
   // Panel 3: README + GitHub + Web
   const panelRight = document.createElement('div');
   panelRight.className = 'wv2-panel right';
   container.appendChild(panelRight);
+
+  const canvasRight = document.createElement('canvas');
+  canvasRight.className = 'wv2-bg-canvas';
+  panelRight.appendChild(canvasRight);
+
+  const titleRight = document.createElement('div');
+  titleRight.className = 'wv2-titlebar';
+  titleRight.textContent = 'helpers';
+  panelRight.appendChild(titleRight);
 
   // ── Container sizing (same as before) ──
   const BASE_RATIO = 0.85;
@@ -490,6 +561,163 @@
     animId = requestAnimationFrame(drawNetwork);
   }
 
+  // ── Evangelion geometric figures (panelCenter) ──
+  let rippleId = null;
+  let rippleTime = 0;
+  let ripples = [];
+
+  function spawnRipple(w, h) {
+    ripples.push({
+      x: Math.random() * w,
+      y: Math.random() * h,
+      r: 0,
+      maxR: 20 + Math.random() * 120,
+      speed: 0.3 + Math.random() * 1.2,
+      alpha: 0.5 + Math.random() * 0.5,
+      hue: 180 + Math.random() * 120,
+      shape: Math.floor(Math.random() * 4),
+      sides: Math.floor(Math.random() * 3) + 3,
+      rotation: Math.random() * Math.PI * 2,
+    });
+  }
+
+  function drawShape(ctx, x, y, r, sides, rot) {
+    if (sides === 0) {
+      ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); return;
+    }
+    ctx.beginPath();
+    for (let i = 0; i <= sides; i++) {
+      const a = rot + (i / sides) * Math.PI * 2;
+      const px = x + Math.cos(a) * r, py = y + Math.sin(a) * r;
+      i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+    }
+    ctx.closePath();
+  }
+
+  function drawRipples() {
+    if (!canvasCenter) return;
+    const rect = canvasCenter.getBoundingClientRect();
+    if (rect.width <= 0 || rect.height <= 0) { rippleId = requestAnimationFrame(drawRipples); return; }
+    const dpr = window.devicePixelRatio || 1;
+    if (canvasCenter.width !== Math.round(rect.width * dpr) || canvasCenter.height !== Math.round(rect.height * dpr)) {
+      canvasCenter.width = Math.round(rect.width * dpr);
+      canvasCenter.height = Math.round(rect.height * dpr);
+    }
+    const ctx = canvasCenter.getContext('2d');
+    if (!ctx) return;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, rect.width, rect.height);
+
+    rippleTime += 0.016;
+
+    if (rippleTime % 0.3 < 0.016 && ripples.length < 80) spawnRipple(rect.width, rect.height);
+
+    for (let i = ripples.length - 1; i >= 0; i--) {
+      const o = ripples[i];
+      o.r += o.speed;
+      o.rotation += 0.01;
+      const progress = o.r / o.maxR;
+      const alpha = o.alpha * (1 - progress);
+
+      if (alpha <= 0 || o.r > o.maxR) { ripples.splice(i, 1); continue; }
+
+      const fillA = alpha * 0.15;
+      ctx.fillStyle = `hsla(${o.hue}, 65%, 55%, ${fillA})`;
+      ctx.strokeStyle = `hsla(${o.hue}, 70%, 50%, ${alpha * 0.9})`;
+      ctx.lineWidth = 1.5 + (1 - progress) * 2;
+      drawShape(ctx, o.x, o.y, o.r, o.shape === 0 ? 0 : o.sides, o.rotation);
+      ctx.fill();
+      ctx.stroke();
+
+      if (o.r > 15) {
+        const innerR = o.r * (0.4 + 0.2 * Math.sin(o.rotation));
+        ctx.fillStyle = `hsla(${o.hue + 40}, 60%, 60%, ${fillA * 0.6})`;
+        ctx.strokeStyle = `hsla(${o.hue + 40}, 65%, 55%, ${alpha * 0.5})`;
+        ctx.lineWidth = 1;
+        drawShape(ctx, o.x, o.y, innerR, o.shape === 0 ? 0 : o.sides, o.rotation + 0.5);
+        ctx.fill();
+        ctx.stroke();
+      }
+    }
+
+    rippleId = requestAnimationFrame(drawRipples);
+  }
+
+  // ── Koch curve animation (panelRight) ──
+  let kochId = null;
+  let kochTime = 0;
+
+  function kochSegment(ctx, x1, y1, x2, y2, iter) {
+    if (iter <= 0) {
+      ctx.lineTo(x2, y2);
+      return;
+    }
+    const dx = x2 - x1;
+    const dy = y2 - y1;
+    const thirdX = x1 + dx / 3;
+    const thirdY = y1 + dy / 3;
+    const twoThirdX = x1 + (2 * dx) / 3;
+    const twoThirdY = y1 + (2 * dy) / 3;
+
+    const angle = Math.atan2(dy, dx) + Math.PI / 3 * Math.sin(kochTime + iter * 0.5);
+    const len = Math.sqrt(dx * dx + dy * dy) / 3;
+    const peakX = thirdX + Math.cos(angle) * len;
+    const peakY = thirdY + Math.sin(angle) * len;
+
+    kochSegment(ctx, x1, y1, thirdX, thirdY, iter - 1);
+    kochSegment(ctx, thirdX, thirdY, peakX, peakY, iter - 1);
+    kochSegment(ctx, peakX, peakY, twoThirdX, twoThirdY, iter - 1);
+    kochSegment(ctx, twoThirdX, twoThirdY, x2, y2, iter - 1);
+  }
+
+  function drawKochCurve() {
+    if (!canvasRight) return;
+    const rect = canvasRight.getBoundingClientRect();
+    if (rect.width <= 0 || rect.height <= 0) { kochId = requestAnimationFrame(drawKochCurve); return; }
+    const dpr = window.devicePixelRatio || 1;
+    if (canvasRight.width !== Math.round(rect.width * dpr) || canvasRight.height !== Math.round(rect.height * dpr)) {
+      canvasRight.width = Math.round(rect.width * dpr);
+      canvasRight.height = Math.round(rect.height * dpr);
+    }
+    const ctx = canvasRight.getContext('2d');
+    if (!ctx) return;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    ctx.fillStyle = '#1a0a2e';
+    ctx.fillRect(0, 0, rect.width, rect.height);
+
+    kochTime += 0.01;
+
+    const size = Math.min(rect.width, rect.height) * 0.35;
+    const cx = rect.width / 2;
+    const cy = rect.height / 2;
+    const iter = 3;
+
+    ctx.strokeStyle = `hsl(${280 + Math.sin(kochTime) * 20}, 70%, 60%)`;
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    const spread = Math.PI * 2 / 3;
+    for (let i = 0; i < 3; i++) {
+      const a1 = i * spread - Math.PI / 2 + Math.sin(kochTime * 0.3) * 0.1;
+      const a2 = ((i + 1) % 3) * spread - Math.PI / 2 + Math.sin(kochTime * 0.3) * 0.1;
+      const x1 = cx + Math.cos(a1) * size;
+      const y1 = cy + Math.sin(a1) * size;
+      const x2 = cx + Math.cos(a2) * size;
+      const y2 = cy + Math.sin(a2) * size;
+      ctx.moveTo(x1, y1);
+      kochSegment(ctx, x1, y1, x2, y2, iter);
+    }
+    ctx.closePath();
+    ctx.stroke();
+
+    ctx.fillStyle = `hsla(${280 + Math.sin(kochTime) * 20}, 60%, 50%, 0.08)`;
+    ctx.fill();
+
+    kochId = requestAnimationFrame(drawKochCurve);
+  }
+
   function startAnimation() {
     if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
@@ -500,12 +728,32 @@
     }
     if (animId) cancelAnimationFrame(animId);
     drawNetwork();
+
+    if (canvasCenter) {
+      rippleTime = 0;
+      if (rippleId) cancelAnimationFrame(rippleId);
+      drawRipples();
+    }
+
+    if (canvasRight) {
+      kochTime = 0;
+      if (kochId) cancelAnimationFrame(kochId);
+      drawKochCurve();
+    }
   }
 
   function stopAnimation() {
     if (animId) {
       cancelAnimationFrame(animId);
       animId = null;
+    }
+    if (rippleId) {
+      cancelAnimationFrame(rippleId);
+      rippleId = null;
+    }
+    if (kochId) {
+      cancelAnimationFrame(kochId);
+      kochId = null;
     }
   }
 
@@ -791,7 +1039,8 @@
     postitEl.classList.add('open');
     postitEl.style.animation = 'none';
     void postitEl.offsetHeight;
-    postitEl.style.animation = 'win-open 0.3s cubic-bezier(.34,1.56,.64,1) forwards';
+      postitEl.style.animation = 'win-open 0.3s cubic-bezier(.34,1.56,.64,1) forwards';
+    bringToFront(postitEl);
   }
 
   // ── Carousel window ──
@@ -856,6 +1105,7 @@
 
   function showCarousel(images, title) {
     if (images.length === 0) return;
+    bringToFront(carousel);
     carouselImages = images;
     carouselIndex = 0;
     titleSpan.textContent = title;
@@ -873,6 +1123,11 @@
       void carousel.offsetHeight;
       carousel.style.animation = 'win-open 0.3s cubic-bezier(.34,1.56,.64,1) forwards';
     });
+  }
+
+  let topZIndex = 101;
+  function bringToFront(el) {
+    el.style.zIndex = topZIndex++;
   }
 
   function closeCarousel() {
@@ -977,6 +1232,17 @@
     if (animId) cancelAnimationFrame(animId);
     drawNetwork();
 
+    if (canvasCenter) {
+      rippleTime = 0;
+      if (rippleId) cancelAnimationFrame(rippleId);
+      drawRipples();
+    }
+    if (canvasRight) {
+      kochTime = 0;
+      if (kochId) cancelAnimationFrame(kochId);
+      drawKochCurve();
+    }
+
     renderTechIcons(currentProject);
 
     const links = projectLinks[currentProject];
@@ -1022,8 +1288,14 @@
       if (!wasSelected) {
         row.classList.add('selected');
         currentProject = row.dataset.project || '';
-        const hasBack = row.dataset.hasback === 'true';
-        if (folderWraps[1]) folderWraps[1].style.display = hasBack ? '' : 'none';
+        const hasBack = row.dataset.hasback;
+        if (folderWraps[0]) folderWraps[0].style.display = '';
+        if (folderWraps[1]) folderWraps[1].style.display = '';
+        if (hasBack === 'true') { /* both */ }
+        else if (hasBack === 'false') { if (folderWraps[0]) folderWraps[0].style.display = 'none'; }
+        else { if (folderWraps[1]) folderWraps[1].style.display = 'none'; }
+        closeCarousel();
+        if (postitEl) postitEl.classList.remove('open');
         if (container) {
           positionContainer();
           container.classList.add('open');
@@ -1037,6 +1309,7 @@
           stopAnimation();
           hideFolders();
           if (postitEl) postitEl.classList.remove('open');
+          closeCarousel();
         }
       }
     });
