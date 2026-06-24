@@ -58,8 +58,6 @@ const leadCerts = getCertificationsByCategory('leadership');
 </html>
 
 <script>
-  import { scroll } from 'motion';
-
   function initMural(sectionId, trackId, titleId) {
     const section = document.getElementById(sectionId);
     const track = document.getElementById(trackId);
@@ -175,7 +173,7 @@ const leadCerts = getCertificationsByCategory('leadership');
     layout();
     update();
 
-    scroll(update, { container: document.documentElement });
+    window.addEventListener('scroll', update, { passive: true });
 
     window.addEventListener('resize', () => {
       layout();

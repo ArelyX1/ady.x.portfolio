@@ -410,8 +410,12 @@
 </style>
 
 <script>
-  import { hover, press, animate } from 'motion';
-
+  function animate(el, keyframes, options = {}) {
+    const kf = Array.isArray(keyframes) ? keyframes : [{}, keyframes];
+    const dur = (options.duration || 0) * 1000;
+    const eas = Array.isArray(options.easing) ? `cubic-bezier(${options.easing.join(',')})` : (options.easing || 'linear');
+    return el.animate(kf, { duration: dur, easing: eas, fill: 'forwards' });
+  }
   const section = document.getElementById('work-v2');
   const workBlock = document.getElementById('work-wrapper');
   const rows = section?.querySelectorAll('.wv2-row') ?? [];
@@ -787,15 +791,11 @@
       panelLeft.appendChild(wrap);
       folderWraps.push(wrap);
 
-      hover(wrap, {
-        onHoverStart: () => { animate(wrap, { scale: 1.15 }, { duration: 0.2, easing: 'ease-out' }); },
-        onHoverEnd: () => { animate(wrap, { scale: 1 }, { duration: 0.2, easing: 'ease-out' }); },
-      });
+      wrap.addEventListener('mouseenter', () => { animate(wrap, { scale: 1.15 }, { duration: 0.2, easing: 'ease-out' }); });
+      wrap.addEventListener('mouseleave', () => { animate(wrap, { scale: 1 }, { duration: 0.2, easing: 'ease-out' }); });
 
-      press(wrap, {
-        onPressStart: () => { animate(wrap, { scale: 0.9 }, { duration: 0.1, easing: 'ease-out' }); },
-        onPressEnd: () => { animate(wrap, { scale: 1 }, { duration: 0.15, easing: 'ease-out' }); },
-      });
+      wrap.addEventListener('pointerdown', () => { animate(wrap, { scale: 0.9 }, { duration: 0.1, easing: 'ease-out' }); });
+      wrap.addEventListener('pointerup', () => { animate(wrap, { scale: 1 }, { duration: 0.15, easing: 'ease-out' }); });
 
       let dragging = false, startX, startY, origX, origY;
       const ww = 110, wh = 110 + 24;

@@ -1,5 +1,3 @@
-import { scroll } from 'motion';
-
 const MURALS = [
   ['crt-tech', 'crt-track-tech', 'crt-title-tech'],
   ['crt-otros', 'crt-track-otros', 'crt-title-otros'],
@@ -148,7 +146,7 @@ function initMural(sectionId, trackId, titleId) {
   }, { root: null, threshold: 0 });
   io.observe(section);
 
-  scroll(update, { container: document.documentElement });
+  window.addEventListener('scroll', update, { passive: true });
 
   window.addEventListener('resize', () => {
     layout();

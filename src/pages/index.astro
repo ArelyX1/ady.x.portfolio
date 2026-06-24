@@ -68,7 +68,16 @@ import ContactSection from '../components/ContactSection.astro';
 </html>
 
 <script>
-  import { animate } from 'motion';
+  function animate(el, keyframes, options = {}) {
+    const kf = Array.isArray(keyframes) ? keyframes : [{}, keyframes];
+    return el.animate(kf, {
+      duration: (options.duration || 0) * 1000,
+      delay: (options.delay || 0) * 1000,
+      easing: Array.isArray(options.easing) ? `cubic-bezier(${options.easing.join(',')})` : (options.easing || 'linear'),
+      fill: 'forwards',
+      iterations: options.repeat ?? 1,
+    });
+  }
   import('../home/infrastructure/ui/scripts/boot.js');
   import { MODELS } from '../home/application/model-viewer/config.js';
   import { initCertMurals } from '../certifications/infrastructure/ui/scripts/certMural.js';
