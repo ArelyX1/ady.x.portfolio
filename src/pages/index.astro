@@ -8,16 +8,111 @@ import CertificationsSection from '../components/CertificationsSection.astro';
 import ContactSection from '../components/ContactSection.astro';
 ---
 
-<html lang="es">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="generator" content={Astro.generator} />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&family=VT323&display=swap" rel="stylesheet">
+    <style is:global>
+      #title-postits {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        flex-shrink: 0;
+      }
+      #title-postit {
+        background: #1f1f1f;
+        color: #fff;
+        padding: 1.25rem 1.5rem;
+        font-family: 'VT323', 'Courier New', monospace;
+        font-weight: 400;
+        letter-spacing: 0.02em;
+        line-height: 1.5;
+        position: relative;
+        max-width: 340px;
+        border-left: 4px solid #8a0606;
+        align-self: flex-start;
+        margin-top: 1.5rem;
+      }
+      #title-postit-2 {
+        background: #fff;
+        color: #1f1f1f;
+        padding: 1.25rem 1.5rem;
+        font-family: 'Ubuntu', sans-serif;
+        font-weight: 400;
+        letter-spacing: 0.02em;
+        line-height: 1.5;
+        position: relative;
+        max-width: 340px;
+        border: 2px solid #8a0606;
+        align-self: flex-end;
+      }
+      .postit-pin { display: none; }
+      .postit-body p {
+        margin: 0;
+        font-size: clamp(0.9rem, 1.5vw, 1.05rem);
+      }
+      .postit-body p + p {
+        margin-top: 0.3rem;
+      }
+      .postit-label {
+        font-family: 'VT323', 'Courier New', monospace;
+        font-size: clamp(1rem, 1.7vw, 1.2rem) !important;
+        margin-bottom: 0.5rem !important;
+        color: #8a0606;
+        letter-spacing: 0.12em;
+      }
+      .postit-body ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+      .postit-body li {
+        font-size: clamp(0.85rem, 1.4vw, 1rem);
+        line-height: 1.7;
+        padding-left: 0.75em;
+      }
+      .postit-body li::before {
+        content: '>';
+        color: #8a0606;
+        font-weight: 700;
+        margin-right: 0.4em;
+      }
+      @media (max-width: 767px) {
+        #portfolio-title { padding-left: 4% !important; padding-right: 4% !important; }
+        #title-line { gap: 0.5rem !important; }
+        #title-text, #title-text-2, #title-title { white-space: nowrap; }
+        #title-phrase, #title-phrase-2 { font-size: clamp(1.5rem, 5vw, 2.5rem) !important; }
+        #title-autor { font-size: clamp(1.25rem, 4.5vw, 2.25rem) !important; }
+        #title-postits {
+          width: 100%;
+        }
+        #title-postit, #title-postit-2 {
+          max-width: 100%;
+          align-self: flex-start;
+          margin-top: 0;
+        }
+      }
+      @media (max-width: 550px) {
+        #title-text, #title-text-2, #title-title { font-size: clamp(2rem, 6vw, 3.5rem) !important; }
+        #title-sub { font-size: clamp(0.9rem, 3vw, 1.25rem) !important; }
+      }
+      @media (max-width: 400px) {
+        #title-title { font-size: clamp(1.6rem, 5.5vw, 2rem) !important; }
+        #title-text, #title-text-2 { font-size: clamp(1.8rem, 7vw, 2.5rem) !important; }
+        #title-sub { font-size: clamp(0.8rem, 2.5vw, 0.9rem) !important; }
+        #title-phrase, #title-phrase-2 { font-size: clamp(1.1rem, 4.5vw, 1.5rem) !important; }
+        #title-autor { font-size: clamp(1rem, 4vw, 1.4rem) !important; }
+        #title-line { flex-direction: column; align-items: flex-start; gap: 0.25rem !important; }
+        #title-postits { gap: 0.5rem; }
+        #title-postit, #title-postit-2 { padding: 1rem 1.25rem; }
+      }
+    </style>
   </head>
   <body style="margin:0; background:#000; overflow:hidden;">
     <div id="boot-screen" class="boot-screen">
@@ -36,17 +131,42 @@ import ContactSection from '../components/ContactSection.astro';
       <SiteHead />
     </div>
 
-    <div id="portfolio-title" style="display:none; margin-top:40px; padding-left:5%; background:#fff; color:#1f1f1f; font-family: 'Ubuntu', monospace; font-weight: 800; letter-spacing:.15em;">
-      <div id="title-line" style="display:flex; align-items:baseline; gap:15rem;">
-        <div id="title-text" style="font-size:clamp(3.5rem,9.5vw,7.5rem); font-weight: 900; height: 0.4em; min-height: 1em; line-height:1; overflow:hidden;"></div>
-        <div id="title-sub" style="font-size:clamp(1.25rem,2.5vw,1.75rem); font-weight:700; height: 0.4em; min-height: 1em; line-height:1; overflow:hidden; color:#1f1f1f;"></div>
+    <div id="portfolio-title" style="display:none; margin-top:40px; padding-left:5%; padding-right:5%; background:#fff; color:#1f1f1f; font-family: 'Ubuntu', monospace; font-weight: 800; letter-spacing:.15em;">
+      <div id="title-row" style="display:flex; gap:clamp(1rem, 3vw, 3rem); align-items:flex-start; flex-wrap:wrap;">
+        <div id="title-main">
+          <div id="title-line" style="display:flex; align-items:baseline; gap:clamp(1rem, 10vw, 15rem); flex-wrap:wrap;">
+            <div id="title-text" style="font-size:clamp(3.5rem,9.5vw,7.5rem); font-weight: 900; height: 0.4em; min-height: 1em; line-height:1; overflow:hidden;"></div>
+            <div id="title-sub" style="font-size:clamp(1.25rem,2.5vw,1.75rem); font-weight:700; height: 0.4em; min-height: 1em; line-height:1; overflow:hidden; color:#1f1f1f;"></div>
+          </div>
+          <div id="title-text-2" style="font-size:clamp(3.5rem,9.5vw,7.5rem); font-weight: 900; height: 0.4em; min-height: 1em; line-height:1; overflow:hidden;"></div>
+          <div id="title-title" style="font-size:clamp(3.5rem,9.5vw,7.5rem); font-weight: 900; height: 0.4em; min-height: 1em; line-height:1; overflow:hidden; color:#8a0606;"></div>
+          <div id="title-phrase" style="font-size:clamp(3.75rem,6vw,4.5rem); font-style: italic; font-weight: 600; overflow:hidden; height: 0.4em; min-height: 1em; line-height:1; margin-top: 0.5rem;"></div>
+          <div id="title-phrase-2" style="font-size:clamp(3.75rem,6vw,4.5rem); font-style: italic; font-weight: 600; overflow:hidden; height: 0.4em; min-height: 1em; line-height:1; margin-top: 0.5rem;"></div>
+          <div id="title-autor" style="font-size:clamp(3.55rem,5.7vw,4.3rem); font-style: italic; font-weight: 600; overflow:hidden; height: 0.4em; min-height: 1em; line-height:1; margin-top: 0.5rem;"></div>
+        </div>
+        <div id="title-postits">
+          <div id="title-postit">
+            <div class="postit-pin"></div>
+            <div class="postit-body">
+              <p>Systems Engineering student</p>
+              <p>at Universidad Católica</p>
+              <p>de Santa María, Arequipa, Perú</p>
+            </div>
+          </div>
+          <div id="title-postit-2">
+            <div class="postit-pin"></div>
+            <div class="postit-body">
+              <p class="postit-label">Interests</p>
+              <ul>
+                <li>Computational Neuroscience</li>
+                <li>Machine Learning</li>
+                <li>Information Technology</li>
+                <li>Neuromorphic Computing</li>
+              </ul>
+            </div>
+          </div>
+        </div>
       </div>
-      <div id="title-text-2" style="font-size:clamp(3.5rem,9.5vw,7.5rem); font-weight: 900; height: 0.4em; min-height: 1em; line-height:1; overflow:hidden;"></div>
-      <div id="title-title" style="font-size:clamp(3.5rem,9.5vw,7.5rem); font-weight: 900; height: 0.4em; min-height: 1em; line-height:1; overflow:hidden; color:#8a0606;"></div>
-
-      <div id="title-phrase" style="font-size:clamp(3.75rem,6vw,4.5rem); font-style: italic; font-weight: 600; overflow:hidden; height: 0.4em; min-height: 1em; line-height:1; margin-top: 0.5rem;"></div>
-      <div id="title-phrase-2" style="font-size:clamp(3.75rem,6vw,4.5rem); font-style: italic; font-weight: 600; overflow:hidden; height: 0.4em; min-height: 1em; line-height:1; margin-top: 0.5rem;"></div>
-      <div id="title-autor" style="font-size:clamp(3.55rem,5.7vw,4.3rem); font-style: italic; font-weight: 600; overflow:hidden; height: 0.4em; min-height: 1em; line-height:1; margin-top: 0.5rem;"></div>
     </div>
 
     <div id="work-wrapper" style="display:none;">
@@ -66,6 +186,14 @@ import ContactSection from '../components/ContactSection.astro';
     <div id="white-bottom" style="position:fixed; bottom:0; left:0; right:0; height:0; background:#fff; z-index:100;"></div>
     <div id="white-left" style="position:fixed; left:0; top:0; bottom:0; width:0; background:#fff; z-index:100;"></div>
     <div id="white-right" style="position:fixed; right:0; top:0; bottom:0; width:0; background:#fff; z-index:100;"></div>
+
+    <section id="follow-section" style="display:none; font-family:'VT323',monospace; padding:2rem 5%; text-align:center; background:#fff; border-top:1px solid #1f1f1f;">
+      <div style="font-size:clamp(0.75rem,1.5vw,1rem); letter-spacing:0.4em; color:#444; text-transform:uppercase; margin-bottom:1rem;">> Follow Me</div>
+      <div style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
+        <a href="https://github.com/arelyX1" target="_blank" rel="noopener" class="follow-btn">GITHUB</a>
+        <a href="https://www.linkedin.com/in/andry-caceres-439504331/" target="_blank" rel="noopener" class="follow-btn">LINKEDIN</a>
+      </div>
+    </section>
   </body>
 </html>
 
@@ -131,6 +259,7 @@ import ContactSection from '../components/ContactSection.astro';
       animateTextById('title-phrase-2', "it's better when it's free.\"",0.28);
       animateTextById('title-autor', " - Linus Torvalds -");
       titleDiv.style.opacity = '1';
+      setTimeout(releaseTitleOverflow, 3500);
     }
 
     const vh = window.innerHeight * 0.01;
@@ -152,31 +281,29 @@ import ContactSection from '../components/ContactSection.astro';
     if (certsEl) {
       certsEl.style.display = 'block';
       setTimeout(() => {
-        if (window.__adblockDetected === undefined) {
-          const bait = document.createElement('div');
-          bait.className = 'adsbox pub_300x250';
-          bait.innerHTML = '&nbsp;';
-          bait.style.cssText = 'position:absolute;left:-9999px';
-          document.body.appendChild(bait);
-          window.__adblockDetected = bait.offsetHeight === 0 || bait.offsetParent === null;
-          bait.remove();
-        }
-        if (window.__adblockDetected) {
-          const existing = document.getElementById('adblock-warning');
-          if (!existing) {
+        if (window.__adblockDetected && window.innerWidth >= 768) {
+          if (!document.getElementById('adblock-crt-warning')) {
             const warn = document.createElement('div');
-            warn.id = 'adblock-warning';
-            warn.style.cssText = 'padding:1rem 2rem;margin:1rem;background:#fff3cd;border:2px solid #ffc107;border-radius:8px;color:#856404;font-family:Ubuntu,monospace;font-size:0.95rem;text-align:center;';
-            warn.innerHTML = '<strong>⚠ Ad Blocker Detectado</strong><br>Algunos contenidos (certificaciones) pueden no mostrarse correctamente. Desactívalo para este sitio.';
-            certsEl.prepend(warn);
+            warn.id = 'adblock-crt-warning';
+            warn.innerHTML = '<div class="crt-scanlines"></div><div class="crt-warn-content"><span class="crt-warn-icon">⚠</span><p class="crt-warn-title">AD BLOCKER DETECTED</p><p class="crt-warn-text">This page uses a component which may be blocked<br>by an ad blocker. Disable it for the best experience.</p><div class="crt-warn-follow"><span class="crt-warn-follow-text">FOLLOW ME</span><div class="crt-warn-links"><a href="https://github.com/arelyX1" target="_blank" rel="noopener" class="crt-warn-btn">GITHUB</a><a href="https://www.linkedin.com/in/andry-caceres-439504331/" target="_blank" rel="noopener" class="crt-warn-btn">LINKEDIN</a></div></div><button class="crt-warn-dismiss" id="crt-warn-dismiss">&gt; DISMISS</button></div>';
+            document.body.appendChild(warn);
+            warn.addEventListener('click', function dismiss(e) {
+              if (e.target.id === 'crt-warn-dismiss' || e.target.closest('#crt-warn-dismiss')) {
+                warn.style.transition = 'opacity 0.3s ease';
+                warn.style.opacity = '0';
+                setTimeout(() => warn.remove(), 350);
+              }
+            });
           }
-        } else {
+        } else if (!window.__adblockDetected) {
           import('../certifications/infrastructure/ui/scripts/certMural.js').then(m => m.initCertMurals()).catch(() => {});
         }
       }, 100);
     }
     const contactEl = document.getElementById('contact-wrapper');
     if (contactEl) contactEl.style.display = 'block';
+    const followEl = document.getElementById('follow-section');
+    if (followEl) followEl.style.display = 'block';
 
     window.scrollTo(0, 0);
     const siteHead = document.querySelector('.site-head');
@@ -184,6 +311,17 @@ import ContactSection from '../components/ContactSection.astro';
 
     this.style.display = 'none';
   });
+
+  function releaseTitleOverflow() {
+    const ids = ['title-text', 'title-sub', 'title-text-2', 'title-title', 'title-phrase', 'title-phrase-2', 'title-autor'];
+    ids.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.style.overflow = 'visible';
+        el.style.height = 'auto';
+      }
+    });
+  }
 
   function animateTextById(id, text, duration = 0.7, charDelay = 0.09) {
     const el = document.getElementById(id);
@@ -351,10 +489,12 @@ import ContactSection from '../components/ContactSection.astro';
 
     const delay = window.__skipAnimation ? 200 : 2500;
     setTimeout(async () => {
-      const vhsEffect = viewer.startVHS();
-      await new Promise(r => setTimeout(r, 1000));
-      viewer.stopVHS();
-      if (viewer && viewer.dispose) viewer.dispose();
+      if (window.__modelViewer) {
+        const vhsEffect = window.__modelViewer.startVHS();
+        await new Promise(r => setTimeout(r, 1000));
+        window.__modelViewer.stopVHS();
+        if (window.__modelViewer && window.__modelViewer.dispose) window.__modelViewer.dispose();
+      }
       modelContainer.style.display = 'none';
 
       const titleDiv = document.getElementById('portfolio-title');
@@ -369,6 +509,9 @@ import ContactSection from '../components/ContactSection.astro';
       animateTextById('title-phrase-2', "it's better when it's free.\"",0.28);
       animateTextById('title-autor', " - Linus Torvalds -");
       titleDiv.style.opacity = '1';
+      setTimeout(releaseTitleOverflow, 3500);
+      const skipBtn = document.getElementById('skip-btn');
+      if (skipBtn) skipBtn.style.display = 'none';
 
       setTimeout(() => {
         const vh = window.innerHeight * 0.01;
@@ -381,6 +524,8 @@ import ContactSection from '../components/ContactSection.astro';
         document.documentElement.style.overflow = 'auto';
         document.body.style.height = '';
         document.documentElement.style.height = '';
+        const warnOverlay = document.getElementById('adblock-crt-warning');
+        if (warnOverlay) warnOverlay.remove();
         const headContainer = document.getElementById('sitehead-container');
         headContainer.style.display = 'block';
         const workEl = document.getElementById('work-wrapper');
@@ -388,10 +533,16 @@ import ContactSection from '../components/ContactSection.astro';
         const certsEl = document.getElementById('certifications-wrapper');
         if (certsEl) {
           certsEl.style.display = 'block';
-          initCertMurals();
+          if (window.__adblockDetected) {
+            document.querySelectorAll('.crt-mural').forEach(m => m.classList.add('crt-nojs'));
+          } else {
+            initCertMurals();
+          }
         }
         const contactEl = document.getElementById('contact-wrapper');
         if (contactEl) contactEl.style.display = 'block';
+        const followEl = document.getElementById('follow-section');
+        if (followEl) followEl.style.display = 'block';
         // grid init
         const grid = document.getElementById('ws-grid');
         if (grid) {

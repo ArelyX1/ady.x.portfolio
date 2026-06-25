@@ -161,6 +161,7 @@ function initMural(sectionId, trackId, titleId) {
 
 export function initCertMurals() {
   if (booted) return;
+  if (window.innerWidth < 768) return;
   booted = true;
 
   requestAnimationFrame(() => {

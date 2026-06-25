@@ -36,16 +36,20 @@
     justify-content: space-between;
     align-items: center;
     padding: 1.25rem 0;
-    transition: background 0.2s ease, box-shadow 0.2s ease;
-    border-radius: 4px;
+    transition: background 0.25s ease, box-shadow 0.25s ease, scale 0.2s ease;
+    border-radius: 6px;
     cursor: pointer;
     position: relative;
     z-index: 2;
   }
-  .wv2-row:hover,
+  .wv2-row:hover {
+    background: rgba(138, 6, 6, 0.08);
+    box-shadow: inset 0 0 0 2px rgba(138, 6, 6, 0.25);
+    scale: 1.02;
+  }
   .wv2-row.selected {
-    background: rgba(0, 0, 0, 0.03);
-    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
+    background: rgba(138, 6, 6, 0.12);
+    box-shadow: inset 0 0 0 2px rgba(138, 6, 6, 0.4);
   }
   .wv2-item {
     padding: 1rem 0;
@@ -407,9 +411,28 @@
     line-height: 1.5;
     white-space: pre-wrap;
   }
+
+  @media (max-width: 767px) {
+    .wv2-row {
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 0.75rem 1rem;
+    }
+    .wv2-item.left {
+      padding-left: 0;
+      font-size: clamp(0.7rem, 2.5vw, 0.85rem);
+      white-space: normal;
+    }
+    .wv2-item.right {
+      padding-right: 0;
+      font-size: clamp(0.55rem, 2vw, 0.7rem);
+      white-space: normal;
+    }
+  }
 </style>
 
 <script>
+  const __isMobileWV2 = window.innerWidth < 768;
   function animate(el, keyframes, options = {}) {
     const kf = Array.isArray(keyframes) ? keyframes : [{}, keyframes];
     const dur = (options.duration || 0) * 1000;
@@ -422,10 +445,32 @@
 
   if (workBlock) workBlock.style.position = 'relative';
 
-  // ── Container (transparent bg, flex row with 3 panels) ──
-  const container = document.createElement('div');
-  container.className = 'wv2-container';
-  workBlock?.appendChild(container);
+  if (!__isMobileWV2) {
+    initDesktopPanels();
+  } else {
+    rows.forEach(row => {
+      row.addEventListener('click', () => {
+        const project = row.dataset.project;
+        if (project) {
+          const links = {
+            'project-neuromorphic-cypher': 'https://github.com/ArelyX1/neuromorphic-computing-cryptography',
+            'project-lidercom': 'https://github.com/ArelyX1/Lidercom-kr-Peru-Platform-ML-Backend',
+            'project-go-bubble': 'https://github.com/ArelyX1/Go-Bubble',
+            'project-resource-monitor': null,
+            'project-blockchain-jam': 'https://github.com/ArelyX1/strawberry-jam',
+            'project-the-mistis-heart': 'https://github.com/ArelyX1/The-Misti-s-Heart',
+          };
+          const url = links[project];
+          if (url) window.open(url, '_blank');
+        }
+      });
+    });
+  }
+
+  function initDesktopPanels() {
+    const container = document.createElement('div');
+    container.className = 'wv2-container';
+    workBlock?.appendChild(container);
 
   // Panel 1: Folders + network animation
   const panelLeft = document.createElement('div');
@@ -1350,4 +1395,5 @@
   createFolderComponents();
   createRightPanelIcons();
   postitEl = createPostit();
+  }
 </script>

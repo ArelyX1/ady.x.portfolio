@@ -6,7 +6,11 @@ import { createAsciiTexture, CustomASCIIEffect } from './ASCIIEffect.js';
 import { VHSDistortionEffect } from './VHSEffect.js';
 
 export function initModelViewer(container, config) {
-  if (window.innerWidth < 520) return;
+  try {
+    const testCanvas = document.createElement('canvas');
+    const gl = testCanvas.getContext('webgl') || testCanvas.getContext('experimental-webgl');
+    if (!gl) return;
+  } catch (e) { return; }
 
   const isMulti = Array.isArray(config);
   const configs = isMulti ? config : [config];
@@ -23,7 +27,7 @@ export function initModelViewer(container, config) {
     alpha: true,
     antialias: false,
     powerPreference: "high-performance",
-    failIfMajorPerformanceCaveat: true,
+    failIfMajorPerformanceCaveat: false,
   });
   const pr = Math.min(devicePixelRatio, 1.5);
   renderer.setPixelRatio(pr);

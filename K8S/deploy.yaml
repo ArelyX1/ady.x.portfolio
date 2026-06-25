@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: arelyxl-portfolio
-        image: arelyxl/portfolio:v2.3
+        image: arelyxl/portfolio:v10.6
         imagePullPolicy: Always
         ports:
         - containerPort: 80
