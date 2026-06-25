@@ -24,6 +24,8 @@ import ContactSection from '../components/ContactSection.astro';
       <div id="boot-output" class="boot-output"></div>
     </div>
 
+    <button id="skip-btn" class="skip-btn">&gt;&gt; SKIP</button>
+
     <div id="video-container" style="display:none; position:fixed; inset:0; z-index:50; background:#000;">
       <video id="staticVideo" src="/Static_Screen.mp4" muted autoplay playsinline style="width:100%; height:100%; object-fit:cover;"></video>
     </div>
@@ -81,6 +83,107 @@ import ContactSection from '../components/ContactSection.astro';
   import('../home/infrastructure/ui/scripts/boot.js');
   import { MODELS } from '../home/application/model-viewer/config.js';
   import { initCertMurals } from '../certifications/infrastructure/ui/scripts/certMural.js';
+
+  let __skipRunning = false;
+  document.getElementById('skip-btn')?.addEventListener('click', async function () {
+    if (window.__skipAnimation || __skipRunning) return;
+    __skipRunning = true;
+    window.__skipAnimation = true;
+
+    const bootScreen = document.getElementById('boot-screen');
+    if (bootScreen) { bootScreen.style.transition = 'none'; bootScreen.style.display = 'none'; }
+
+    const videoContainer = document.getElementById('video-container');
+    if (videoContainer) videoContainer.style.display = 'none';
+    const video = document.getElementById('staticVideo');
+    if (video) { video.pause(); video.src = ''; }
+
+    ['white-top', 'white-bottom', 'white-left', 'white-right'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.display = 'none';
+    });
+
+    document.body.style.background = '#fff';
+    document.documentElement.style.background = '#fff';
+
+    const modelContainer = document.getElementById('model-container');
+    if (modelContainer) modelContainer.style.display = 'block';
+    try {
+      const { initModelViewer } = await import('../home/infrastructure/ui/viewer/ModelViewer.js');
+      const viewer = await initModelViewer(modelContainer, MODELS);
+      window.__modelViewer = viewer;
+      const vhsEffect = viewer.startVHS();
+      await new Promise(r => setTimeout(r, 1000));
+      viewer.stopVHS();
+      if (viewer?.dispose) viewer.dispose();
+    } catch (e) {}
+    if (modelContainer) modelContainer.style.display = 'none';
+
+    const titleDiv = document.getElementById('portfolio-title');
+    if (titleDiv) {
+      titleDiv.style.display = 'block';
+      titleDiv.style.opacity = '0';
+      animateTextById('title-text', 'ANDRY');
+      animateTextById('title-sub', '>_AR3LYX1', 0.7, 0.15);
+      animateTextById('title-text-2', 'CACERES');
+      animateTextById('title-title', 'SOFTWARE DEV');
+      animateTextById('title-phrase', "\"Software is like sex:", 0.28);
+      animateTextById('title-phrase-2', "it's better when it's free.\"",0.28);
+      animateTextById('title-autor', " - Linus Torvalds -");
+      titleDiv.style.opacity = '1';
+    }
+
+    const vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
+    window.addEventListener('resize', () => {
+      const vhResize = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vhResize}px`);
+    });
+    document.body.style.overflow = 'auto';
+    document.documentElement.style.overflow = 'auto';
+    document.body.style.height = '';
+    document.documentElement.style.height = '';
+
+    const headContainer = document.getElementById('sitehead-container');
+    if (headContainer) headContainer.style.display = 'block';
+    const workEl = document.getElementById('work-wrapper');
+    if (workEl) workEl.style.display = 'block';
+    const certsEl = document.getElementById('certifications-wrapper');
+    if (certsEl) {
+      certsEl.style.display = 'block';
+      setTimeout(() => {
+        if (window.__adblockDetected === undefined) {
+          const bait = document.createElement('div');
+          bait.className = 'adsbox pub_300x250';
+          bait.innerHTML = '&nbsp;';
+          bait.style.cssText = 'position:absolute;left:-9999px';
+          document.body.appendChild(bait);
+          window.__adblockDetected = bait.offsetHeight === 0 || bait.offsetParent === null;
+          bait.remove();
+        }
+        if (window.__adblockDetected) {
+          const existing = document.getElementById('adblock-warning');
+          if (!existing) {
+            const warn = document.createElement('div');
+            warn.id = 'adblock-warning';
+            warn.style.cssText = 'padding:1rem 2rem;margin:1rem;background:#fff3cd;border:2px solid #ffc107;border-radius:8px;color:#856404;font-family:Ubuntu,monospace;font-size:0.95rem;text-align:center;';
+            warn.innerHTML = '<strong>⚠ Ad Blocker Detectado</strong><br>Algunos contenidos (certificaciones) pueden no mostrarse correctamente. Desactívalo para este sitio.';
+            certsEl.prepend(warn);
+          }
+        } else {
+          import('../certifications/infrastructure/ui/scripts/certMural.js').then(m => m.initCertMurals()).catch(() => {});
+        }
+      }, 100);
+    }
+    const contactEl = document.getElementById('contact-wrapper');
+    if (contactEl) contactEl.style.display = 'block';
+
+    window.scrollTo(0, 0);
+    const siteHead = document.querySelector('.site-head');
+    if (siteHead) siteHead.style.opacity = '1';
+
+    this.style.display = 'none';
+  });
 
   function animateTextById(id, text, duration = 0.7, charDelay = 0.09) {
     const el = document.getElementById(id);
@@ -178,51 +281,75 @@ import ContactSection from '../components/ContactSection.astro';
     const rightPanel = document.getElementById('white-right');
     const modelContainer = document.getElementById('model-container');
 
-    const modelModulePromise = import('../home/infrastructure/ui/viewer/ModelViewer.js');
+    if (window.__skipAnimation) {
+      videoContainer.style.display = 'none';
+      if (video) { video.pause(); video.src = ''; }
+      topPanel.style.display = 'none';
+      bottomPanel.style.display = 'none';
+      leftPanel.style.display = 'none';
+      rightPanel.style.display = 'none';
+      document.body.style.background = '#fff';
+      document.documentElement.style.background = '#fff';
+    } else {
+      const modelModulePromise = import('../home/infrastructure/ui/viewer/ModelViewer.js');
 
-    videoContainer.style.display = 'block';
-    video.currentTime = 3.5;
-    video.play();
+      videoContainer.style.display = 'block';
+      video.currentTime = 3.5;
+      video.play();
 
-    await new Promise(r => setTimeout(r, 1200));
+      await new Promise(r => setTimeout(r, 1200));
 
-    const gap = 80;
-    const topTarget = (window.innerHeight / 2) - (gap / 2);
-    const bottomTarget = (window.innerHeight / 2) - (gap / 2);
-    const leftTarget = (window.innerWidth / 2) - (gap / 2);
-    const rightTarget = (window.innerWidth / 2) - (gap / 2);
+      const gap = 80;
+      const topTarget = (window.innerHeight / 2) - (gap / 2);
+      const bottomTarget = (window.innerHeight / 2) - (gap / 2);
+      const leftTarget = (window.innerWidth / 2) - (gap / 2);
+      const rightTarget = (window.innerWidth / 2) - (gap / 2);
 
-    await Promise.all([
-      animate(topPanel, { height: topTarget + 'px' }, { duration: 1.5, easing: [0.4, 0, 0.2, 1] }).finished,
-      animate(bottomPanel, { height: bottomTarget + 'px' }, { duration: 1.5, easing: [0.4, 0, 0.2, 1] }).finished,
-      animate(leftPanel, { width: leftTarget + 'px' }, { duration: 1.5, easing: [0.4, 0, 0.2, 1] }).finished,
-      animate(rightPanel, { width: rightTarget + 'px' }, { duration: 1.5, easing: [0.4, 0, 0.2, 1] }).finished,
-    ]);
+      await Promise.all([
+        animate(topPanel, { height: topTarget + 'px' }, { duration: 1.5, easing: [0.4, 0, 0.2, 1] }).finished,
+        animate(bottomPanel, { height: bottomTarget + 'px' }, { duration: 1.5, easing: [0.4, 0, 0.2, 1] }).finished,
+        animate(leftPanel, { width: leftTarget + 'px' }, { duration: 1.5, easing: [0.4, 0, 0.2, 1] }).finished,
+        animate(rightPanel, { width: rightTarget + 'px' }, { duration: 1.5, easing: [0.4, 0, 0.2, 1] }).finished,
+      ]);
+
+      modelContainer.style.display = 'block';
+      const setupPromise = (async () => {
+        const { initModelViewer } = await modelModulePromise;
+        const viewer = await initModelViewer(modelContainer, MODELS);
+        window.__modelViewer = viewer;
+        return viewer;
+      })();
+
+      await new Promise(r => setTimeout(r, 0));
+
+      await Promise.all([
+        animate(topPanel, { height: '50%' }, { duration: 0.4, easing: 'ease-in' }).finished,
+        animate(bottomPanel, { height: '50%' }, { duration: 0.4, easing: 'ease-in' }).finished,
+        animate(leftPanel, { width: '50%' }, { duration: 0.4, easing: 'ease-in' }).finished,
+        animate(rightPanel, { width: '50%' }, { duration: 0.4, easing: 'ease-in' }).finished,
+      ]);
+
+      document.body.style.background = '#fff';
+      document.documentElement.style.background = '#fff';
+      videoContainer.style.display = 'none';
+      topPanel.style.display = 'none';
+      bottomPanel.style.display = 'none';
+      leftPanel.style.display = 'none';
+      rightPanel.style.display = 'none';
+      window.__modelViewer = await setupPromise;
+    }
 
     modelContainer.style.display = 'block';
-    const setupPromise = (async () => {
-      const { initModelViewer } = await modelModulePromise;
-      return initModelViewer(modelContainer, MODELS);
-    })();
+    const initViewer = async () => {
+      if (window.__modelViewer) return window.__modelViewer;
+      const { initModelViewer } = await import('../home/infrastructure/ui/viewer/ModelViewer.js');
+      const viewer = await initModelViewer(modelContainer, MODELS);
+      window.__modelViewer = viewer;
+      return viewer;
+    };
+    const viewer = await initViewer();
 
-    await new Promise(r => setTimeout(r, 0));
-
-    await Promise.all([
-      animate(topPanel, { height: '50%' }, { duration: 0.4, easing: 'ease-in' }).finished,
-      animate(bottomPanel, { height: '50%' }, { duration: 0.4, easing: 'ease-in' }).finished,
-      animate(leftPanel, { width: '50%' }, { duration: 0.4, easing: 'ease-in' }).finished,
-      animate(rightPanel, { width: '50%' }, { duration: 0.4, easing: 'ease-in' }).finished,
-    ]);
-
-    document.body.style.background = '#fff';
-    document.documentElement.style.background = '#fff';
-    videoContainer.style.display = 'none';
-    topPanel.style.display = 'none';
-    bottomPanel.style.display = 'none';
-    leftPanel.style.display = 'none';
-    rightPanel.style.display = 'none';
-    const viewer = await setupPromise;
-
+    const delay = window.__skipAnimation ? 200 : 2500;
     setTimeout(async () => {
       const vhsEffect = viewer.startVHS();
       await new Promise(r => setTimeout(r, 1000));
@@ -666,7 +793,7 @@ import ContactSection from '../components/ContactSection.astro';
           document.dispatchEvent(new CustomEvent('intro'));
         }, 300);
       }, 300);
-    }, 2500);
+    }, delay);
   });
 </script>
 

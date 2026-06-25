@@ -1,6 +1,6 @@
 import { kernels, systemdServices } from '../../../application/boot';
 
-const adblockDetected = (() => {
+window.__adblockDetected = (() => {
   const bait = document.createElement('div');
   bait.className = 'adsbox pub_300x250';
   bait.id = 'ad-container--bait';
@@ -12,9 +12,12 @@ const adblockDetected = (() => {
   bait.remove();
   return blocked;
 })();
+const adblockDetected = window.__adblockDetected;
 
 const bootScreen = document.getElementById('boot-screen');
 const bootOutput = document.getElementById('boot-output');
+let __bootCompleteDispatched = false;
+
 if (bootScreen && bootOutput) {
   const now = new Date();
   const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -59,6 +62,10 @@ if (bootScreen && bootOutput) {
   const batchSize = 2;
 
   function showBatch() {
+    if (window.__skipAnimation) {
+      if (!__bootCompleteDispatched) { __bootCompleteDispatched = true; window.dispatchEvent(new CustomEvent('bootComplete')); }
+      return;
+    }
     const fragment = document.createDocumentFragment();
     for (let j = 0; j < batchSize && idx < bootLines.length; j++, idx++) {
       const line = document.createElement('div');
@@ -72,6 +79,10 @@ if (bootScreen && bootOutput) {
       requestAnimationFrame(showBatch);
     } else {
       setTimeout(() => {
+        if (window.__skipAnimation) {
+          if (!__bootCompleteDispatched) { __bootCompleteDispatched = true; window.dispatchEvent(new CustomEvent('bootComplete')); }
+          return;
+        }
         bootOutput.innerHTML = '';
         bootOutput.style.height = 'auto';
         bootScreen.classList.add('boot-screen--centered');
@@ -82,6 +93,10 @@ if (bootScreen && bootOutput) {
         if (adblockDetected) msgs.splice(1, 0, '> WARNING: Ad blocker detected — some content may not display correctly. Please disable it for this site.');
 
         function typeInit(lineIdx, charIdx, cursorEl) {
+          if (window.__skipAnimation) {
+            if (!__bootCompleteDispatched) { __bootCompleteDispatched = true; window.dispatchEvent(new CustomEvent('bootComplete')); }
+            return;
+          }
           if (charIdx < msgs[lineIdx].length) {
             cursorEl.before(document.createTextNode(msgs[lineIdx][charIdx]));
             setTimeout(() => typeInit(lineIdx, charIdx + 1, cursorEl), 40);
@@ -96,9 +111,17 @@ if (bootScreen && bootOutput) {
               setTimeout(() => typeInit(lineIdx + 1, 0, nextCursor), 40);
             } else {
               setTimeout(() => {
+                if (window.__skipAnimation) {
+                  if (!__bootCompleteDispatched) { __bootCompleteDispatched = true; window.dispatchEvent(new CustomEvent('bootComplete')); }
+                  return;
+                }
                 bootScreen.style.transition = 'opacity 0.3s ease';
                 bootScreen.style.opacity = '0';
                 setTimeout(() => {
+                  if (window.__skipAnimation) {
+                    if (!__bootCompleteDispatched) { __bootCompleteDispatched = true; window.dispatchEvent(new CustomEvent('bootComplete')); }
+                    return;
+                  }
                   bootScreen.style.display = 'none';
                   window.dispatchEvent(new CustomEvent('bootComplete'));
                 }, 350);
